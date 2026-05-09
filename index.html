@@ -4,29 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Uthsav - TDTTI Thuravoor</title>
-
-    <!-- Essential Meta Tags for Social Media -->
-    <meta property="og:title" content="Uthsav - TDTTI Thuravoor">
-    <meta property="og:description" content="Registration portal for school festivals and cultural events at TDTTI Thuravoor.">
-    <!-- MUST BE AN ABSOLUTE URL (starting with https://) -->
-    <meta property="og:image" content="https://tdtti.github.io/tdtti/banner.jpg">
-    <meta property="og:url" content="https://tdtti.github.io/tdtti/">
-    <meta property="og:type" content="website">
-
-    <!-- Specific Tags for WhatsApp & Large Cards -->
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
-    <meta property="og:image:type" content="image/jpeg">
-
-    <!-- Specific Tags for Twitter -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Uthsav - TDTTI Thuravoor">
-    <meta name="twitter:description" content="Registration portal for school festivals and cultural events at TDTTI Thuravoor.">
-    <meta name="twitter:image" content="https://tdtti.github.io/tdtti/banner.jpg">
-    
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Uthsav - TDTTI Thuravoor</title>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; margin: 0; padding: 0; }
         * { box-sizing: border-box; }
@@ -112,7 +89,7 @@
 <div id="loadingOverlay">
     <div style="position: relative; width: 100px; height: 100px; display: flex; justify-content: center; align-items: center;">
         <div class="spinner-ring"></div>
-        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiL6zDKd4fmGCJnewz-f5BOhXtXo1gvJ4Paq2fjaFIVd6eAdAG_czl0vfKh_BBp9M5n2XIArDz6CaJd22-di8tY3UeA-HBfGo5XD8FWMi7X2n8WE0TNOEu2J7DJjOCAW02VXnylhZTn-4GIViRTHsgPc9gqpNE6qVzehM86SZEyP0C4WcQ/s1600/Logo2.png" style="width: 60px; height: 60px; border-radius: 50%;" alt="Loading">
+        <img src="https://via.placeholder.com/60?text=Logo" style="width: 60px; height: 60px; border-radius: 50%;" alt="Loading">
     </div>
     <div id="loadingText" style="margin-top: 15px; font-weight: bold; color: #2c3e50;">Loading System...</div>
 </div>
@@ -120,7 +97,7 @@
 <!-- 1. LOGIN SCREEN -->
 <div id="loginScreen">
     <div class="login-box">
-        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiL6zDKd4fmGCJnewz-f5BOhXtXo1gvJ4Paq2fjaFIVd6eAdAG_czl0vfKh_BBp9M5n2XIArDz6CaJd22-di8tY3UeA-HBfGo5XD8FWMi7X2n8WE0TNOEu2J7DJjOCAW02VXnylhZTn-4GIViRTHsgPc9gqpNE6qVzehM86SZEyP0C4WcQ/s1600/Logo2.png" alt="School Logo">
+        <img src="https://via.placeholder.com/80?text=Logo" alt="School Logo">
         <h2>UTHSAV LOGIN</h2>
         <div class="login-tabs">
             <button id="tabStudent" class="active" onclick="switchLogin('student')">Student</button>
@@ -149,7 +126,7 @@
 <div id="appScreen">
     <div class="app-header">
         <div class="header-left">
-            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiL6zDKd4fmGCJnewz-f5BOhXtXo1gvJ4Paq2fjaFIVd6eAdAG_czl0vfKh_BBp9M5n2XIArDz6CaJd22-di8tY3UeA-HBfGo5XD8FWMi7X2n8WE0TNOEu2J7DJjOCAW02VXnylhZTn-4GIViRTHsgPc9gqpNE6qVzehM86SZEyP0C4WcQ/s1600/Logo2.png" alt="School Logo">
+            <img src="https://via.placeholder.com/60?text=Logo" alt="School Logo">
             <div>
                 <h1>UTHSAV REGISTRATION</h1>
                 <h3 style="margin:0; color:#7f8c8d;">TDTTI Thuravoor</h3>
@@ -184,7 +161,6 @@
                             <label>Name of Fest</label>
                             <select id="festName" onchange="populateItems()" required>
                                 <option value="">-- Select Fest --</option>
-                                <!-- Populated dynamically based on Admin Settings -->
                             </select>
                         </div>
                         <div class="form-group">
@@ -287,27 +263,30 @@
             <div class="section">
                 <h4 class="section-title">Manage Official Logins</h4>
                 <div class="row" style="background:#f2f2f2; padding:15px; border-radius:5px; margin-bottom:15px;">
-                    <div class="form-group">
-                        <label>User ID</label>
-                        <input type="text" id="manageUserId" placeholder="Create or Edit ID">
-                    </div>
-                    <div class="form-group">
-                        <label>Name</label>
-                        <input type="text" id="manageUserName" placeholder="Official Name">
-                    </div>
-                    <div class="form-group">
-                        <label>Password</label>
-                        <input type="text" id="manageUserPass" placeholder="Password">
-                    </div>
+                    <div class="form-group"><label>User ID</label><input type="text" id="manageUserId" placeholder="ID"></div>
+                    <div class="form-group"><label>Name</label><input type="text" id="manageUserName" placeholder="Name"></div>
+                    <div class="form-group"><label>Password</label><input type="text" id="manageUserPass" placeholder="Password"></div>
+                    <div class="form-group"><label>Role</label><input type="text" id="manageUserRole" placeholder="e.g. Official"></div>
+                    <div class="form-group"><label>Access</label><input type="text" id="manageUserAccess" placeholder="e.g. All"></div>
                     <div class="form-group" style="justify-content: flex-end;">
                         <input type="hidden" id="manageTargetId" value="">
                         <button class="action-btn" style="background:#27ae60;" onclick="submitUser()">Save / Add User</button>
                     </div>
                 </div>
                 <div class="table-responsive">
-                    <table style="min-width: 600px;">
-                        <thead><tr><th>User ID</th><th>Name</th><th>Password</th><th>Actions</th></tr></thead>
+                    <table style="min-width: 800px;">
+                        <thead><tr><th>User ID</th><th>Name</th><th>Password</th><th>Role</th><th>Access</th><th>Actions</th></tr></thead>
                         <tbody id="adminUserTable"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="section">
+                <h4 class="section-title">Manage Login Logs</h4>
+                <div class="table-responsive">
+                    <table style="min-width: 800px;">
+                        <thead><tr><th>Date</th><th>User ID</th><th>Name</th><th>Login Time</th><th>Logout Time</th><th>Duration</th><th>Actions</th></tr></thead>
+                        <tbody id="adminLogTable"></tbody>
                     </table>
                 </div>
             </div>
@@ -318,10 +297,10 @@
 
 <script>
     // --- REPLACE WITH YOUR NEW WEB APP URL ---
-    const EXEC_URL = "https://script.google.com/macros/s/AKfycbw-bd4ndYbzA1SkXY9F9d_CVsEtV6QAGPa3O-W72DE1Ee4W38_R7oiZu9AnkXA-XbD9Jg/exec"; 
+    const EXEC_URL = "https://script.google.com/macros/s/AKfycbzGW-DIApqztrOpw6sLeai70FUy9BqUowU1Tkefjy2kkPgZHzh5xa2Qn99S7XuKkGBV9A/exec"; 
     
-    let dbStudents = [], dbFests = [], dbRegistrations = [], dbUsers = [];
-    let dbSettings = { Global_Registration: "OPEN", Global_Message: "" }; // Default
+    let dbStudents = [], dbFests = [], dbRegistrations = [], dbUsers = [], dbLogs = [];
+    let dbSettings = { Global_Registration: "OPEN", Global_Message: "" }; 
     let allFestNames = ["General Kalothswom", "Sanskrit Kalothswom", "Arabic Kalothswom", "Art Fest", "Work Experience", "Maths Fest", "Science Fest", "Social Science", "IT Fair", "Sports Fest"];
     
     let currentUser = null, sessionRow = null, timerInterval = null, sessionSeconds = 0;
@@ -349,17 +328,17 @@
         try {
             const res = await fetch(EXEC_URL + "?action=getData");
             const data = await res.json();
-            dbStudents = data.students || []; dbFests = data.fests || [];
-            dbRegistrations = data.registrations || []; dbUsers = data.users || [];
+            dbStudents = data.students || []; 
+            dbFests = data.fests || [];
+            dbRegistrations = data.registrations || []; 
+            dbUsers = data.users || [];
+            dbLogs = data.logs || [];
             
-            // Parse Settings
-            if (data.settings) {
-                data.settings.forEach(s => dbSettings[s.Key] = s.Value);
-            }
+            if (data.settings) data.settings.forEach(s => dbSettings[s.Key] = s.Value);
 
-            // Populate Class and Division Filters
             const classes = [...new Set(dbStudents.map(s => s["Class"]))].filter(Boolean).sort();
             classes.forEach(c => document.getElementById('filterClass').innerHTML += `<option value="${c}">${c}</option>`);
+            
             const divs = [...new Set(dbStudents.map(s => s["Division"]))].filter(Boolean).sort();
             divs.forEach(d => document.getElementById('filterDivision').innerHTML += `<option value="${d}">${d}</option>`);
 
@@ -402,10 +381,9 @@
         document.getElementById('headerName').innerText = name;
         document.getElementById('headerRole').innerText = role;
         
-        // Role-based UI logic
         if (role === "Student") {
             document.getElementById('logoutBtn').style.display = 'none';
-            document.getElementById('adminFilters').style.display = 'none'; // Hide Class/Div search
+            document.getElementById('adminFilters').style.display = 'none'; 
             document.getElementById('btnAdminTab').style.display = 'none';
         } else {
             document.getElementById('logoutBtn').style.display = 'inline-block';
@@ -413,10 +391,12 @@
             document.getElementById('btnAdminTab').style.display = 'inline-block';
         }
 
-        applySettingsToUI(); // Setup Registration form
+        applySettingsToUI(); 
         
-        sessionSeconds = 0; timerInterval = setInterval(()=> {
-            sessionSeconds++; document.getElementById('sessionTimer').innerText = new Date(sessionSeconds * 1000).toISOString().substr(11, 8);
+        sessionSeconds = 0; 
+        timerInterval = setInterval(()=> {
+            sessionSeconds++; 
+            document.getElementById('sessionTimer').innerText = new Date(sessionSeconds * 1000).toISOString().substr(11, 8);
         }, 1000);
 
         try {
@@ -425,14 +405,35 @@
         } catch (e) {}
     }
 
-    document.addEventListener("visibilitychange", () => { if(document.hidden && currentUser?.role==="Student") logout(false); });
-    window.addEventListener("pagehide", () => { if(currentUser?.role==="Official" && sessionRow) fetch(EXEC_URL, {method:'POST', keepalive:true, body: JSON.stringify({action: 'logLogout', row: sessionRow, duration: document.getElementById('sessionTimer').innerText})}).catch(e=>{}); });
+    function sendLogoutLog() {
+        if (sessionRow) {
+            const duration = document.getElementById('sessionTimer').innerText;
+            fetch(EXEC_URL, {
+                method: 'POST', keepalive: true,
+                body: JSON.stringify({ action: 'logLogout', row: sessionRow, duration: duration })
+            }).catch(e=>{});
+            sessionRow = null;
+        }
+    }
+
+    document.addEventListener("visibilitychange", () => {
+        if (document.hidden) {
+            if (currentUser && currentUser.role === "Student") logout(false); 
+            else if (currentUser && currentUser.role === "Official") sendLogoutLog();
+        }
+    });
+
+    window.addEventListener("pagehide", () => {
+        if (currentUser && currentUser.role === "Official") sendLogoutLog();
+    });
 
     async function logout(manual=true) {
         if(!currentUser) return;
         clearInterval(timerInterval);
         if(manual) showLoader("Logging out...");
-        if(sessionRow) fetch(EXEC_URL, {method:'POST', keepalive:true, body: JSON.stringify({action: 'logLogout', row: sessionRow, duration: document.getElementById('sessionTimer').innerText})}).catch(e=>{});
+        
+        sendLogoutLog();
+        
         if(manual && currentUser.role==="Official") localStorage.removeItem("uthsavOfficial");
         currentUser = null;
         if(manual) window.location.reload();
@@ -441,7 +442,6 @@
 
     // --- ADMIN DASHBOARD LOGIC ---
     function applySettingsToUI() {
-        // 1. Check Global Registration Lock
         if (dbSettings.Global_Registration === "CLOSED") {
             document.getElementById('registrationForm').style.display = 'none';
             document.getElementById('regClosedMsg').style.display = 'block';
@@ -451,7 +451,6 @@
             document.getElementById('regClosedMsg').style.display = 'none';
         }
 
-        // 2. Populate Allowed Fests Only
         const festDropdown = document.getElementById('festName');
         festDropdown.innerHTML = '<option value="">-- Select Fest --</option>';
         allFestNames.forEach(f => {
@@ -473,19 +472,17 @@
         });
 
         renderUserTable();
+        renderLogTable();
     }
 
     async function saveAdminSettings() {
         dbSettings.Global_Registration = document.getElementById('adminGlobalStatus').value;
         dbSettings.Global_Message = document.getElementById('adminGlobalMsg').value;
-        
         allFestNames.forEach(f => {
             const chk = document.getElementById("chk_" + f.replace(/\s/g,''));
             dbSettings["Fest_" + f] = chk && chk.checked ? "ENABLED" : "DISABLED";
         });
-
-        applySettingsToUI(); // Update UI instantly
-
+        applySettingsToUI(); 
         showLoader("Saving Settings...");
         try {
             await fetch(EXEC_URL, { method:'POST', body: JSON.stringify({action: 'saveSettings', settings: dbSettings}) });
@@ -493,67 +490,147 @@
         } catch(e) { hideLoader(); showMessage("Error saving settings.", true); }
     }
 
-    // User Management
+    // Users
     function renderUserTable() {
-        const tbody = document.getElementById('adminUserTable');
-        tbody.innerHTML = "";
+        const tbody = document.getElementById('adminUserTable'); tbody.innerHTML = "";
         dbUsers.forEach(u => {
-            if(u.Role === "Official") {
-                tbody.innerHTML += `<tr>
-                    <td>${u["User ID"]}</td>
-                    <td>${u["Name"]}</td>
-                    <td>${u["Password"]}</td>
-                    <td>
-                        <button class="action-btn" style="padding:5px; font-size:12px;" onclick="editUser('${u["User ID"]}', '${u["Name"]}', '${u["Password"]}')">Edit</button>
-                        <button class="logout-btn" style="padding:5px; font-size:12px; margin:0;" onclick="deleteUser('${u["User ID"]}')">Delete</button>
-                    </td>
-                </tr>`;
-            }
+            tbody.innerHTML += `<tr>
+                <td>${u["User ID"]}</td><td>${u["Name"]}</td><td>${u["Password"]}</td><td>${u["Role"]}</td><td>${u["Access"]}</td>
+                <td>
+                    <button class="action-btn" style="padding:5px; font-size:12px;" onclick="editUser('${u["User ID"]}', '${u["Name"]}', '${u["Password"]}', '${u["Role"]}', '${u["Access"]}')">Edit</button>
+                    <button class="logout-btn" style="padding:5px; font-size:12px; margin:0;" onclick="deleteUser('${u["User ID"]}')">Delete</button>
+                </td>
+            </tr>`;
         });
     }
 
-    function editUser(id, name, pass) {
-        document.getElementById('manageTargetId').value = id;
-        document.getElementById('manageUserId').value = id;
-        document.getElementById('manageUserName').value = name;
-        document.getElementById('manageUserPass').value = pass;
+    function editUser(id, name, pass, role, access) {
+        document.getElementById('manageTargetId').value = id; document.getElementById('manageUserId').value = id;
+        document.getElementById('manageUserName').value = name; document.getElementById('manageUserPass').value = pass;
+        document.getElementById('manageUserRole').value = role; document.getElementById('manageUserAccess').value = access;
     }
 
     async function submitUser() {
-        const targetId = document.getElementById('manageTargetId').value;
-        const uId = document.getElementById('manageUserId').value.trim();
-        const uName = document.getElementById('manageUserName').value.trim();
-        const uPass = document.getElementById('manageUserPass').value.trim();
-
-        if(!uId || !uName || !uPass) return showMessage("Fill all fields", true);
-
-        let subAction = targetId ? 'edit' : 'add';
-        
-        showLoader("Saving User...");
+        const targetId = document.getElementById('manageTargetId').value, uId = document.getElementById('manageUserId').value.trim();
+        const uName = document.getElementById('manageUserName').value.trim(), uPass = document.getElementById('manageUserPass').value.trim();
+        const uRole = document.getElementById('manageUserRole').value.trim(), uAcc = document.getElementById('manageUserAccess').value.trim();
+        if(!uId || !uName || !uPass) return showMessage("Fill ID, Name, Password", true);
+        let subAction = targetId ? 'edit' : 'add'; showLoader("Saving User...");
         try {
-            await fetch(EXEC_URL, { method:'POST', body: JSON.stringify({action: 'manageUser', subAction: subAction, targetId: targetId, user: {id: uId, name: uName, password: uPass}}) });
-            
-            // Update local memory
-            if(subAction === 'add') dbUsers.push({"User ID": uId, "Name": uName, "Password": uPass, "Role": "Official"});
-            else {
-                let user = dbUsers.find(x => x["User ID"] === targetId);
-                user["User ID"] = uId; user["Name"] = uName; user["Password"] = uPass;
-            }
-
-            document.getElementById('manageTargetId').value = "";
-            document.getElementById('manageUserId').value = ""; document.getElementById('manageUserName').value = ""; document.getElementById('manageUserPass').value = "";
+            await fetch(EXEC_URL, { method:'POST', body: JSON.stringify({action: 'manageUser', subAction: subAction, targetId: targetId, user: {id: uId, name: uName, password: uPass, role: uRole, access: uAcc}}) });
+            if(subAction === 'add') dbUsers.push({"User ID": uId, "Name": uName, "Password": uPass, "Role": uRole, "Access": uAcc});
+            else { let user = dbUsers.find(x => x["User ID"] === targetId); user["User ID"] = uId; user["Name"] = uName; user["Password"] = uPass; user["Role"] = uRole; user["Access"] = uAcc; }
+            document.getElementById('manageTargetId').value = ""; document.getElementById('manageUserId').value = ""; document.getElementById('manageUserName').value = ""; document.getElementById('manageUserPass').value = ""; document.getElementById('manageUserRole').value = ""; document.getElementById('manageUserAccess').value = "";
             renderUserTable(); hideLoader(); showMessage("User saved!");
         } catch(e) { hideLoader(); showMessage("Error saving user.", true); }
     }
 
     async function deleteUser(id) {
-        if(!confirm(`Are you sure you want to delete official ${id}?`)) return;
+        if(!confirm(`Delete official ${id}?`)) return;
         showLoader("Deleting...");
         try {
             await fetch(EXEC_URL, { method:'POST', body: JSON.stringify({action: 'manageUser', subAction: 'delete', targetId: id}) });
             dbUsers = dbUsers.filter(x => x["User ID"] !== id);
             renderUserTable(); hideLoader(); showMessage("User deleted!");
         } catch(e) { hideLoader(); showMessage("Error deleting.", true); }
+    }
+
+    // Logs
+   
+   
+
+    // Logs
+    function renderLogTable() {
+        const tbody = document.getElementById('adminLogTable'); 
+        tbody.innerHTML = "";
+        
+        [...dbLogs].reverse().forEach(l => {
+            // 1. Format Date
+            let dateStr = "";
+            if (l["Date"]) {
+                let d = new Date(l["Date"]);
+                if (!isNaN(d.getTime())) dateStr = String(d.getDate()).padStart(2, '0') + '/' + String(d.getMonth() + 1).padStart(2, '0') + '/' + d.getFullYear();
+                else dateStr = String(l["Date"]).split('T')[0];
+            }
+            
+            // 2. Format Time Helper
+            const formatTime = (val) => {
+                if (!val) return "";
+                let d = new Date(val);
+                if (!isNaN(d.getTime())) return String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0') + ':' + String(d.getSeconds()).padStart(2, '0');
+                let strVal = String(val).trim().split(' ')[0];
+                if (strVal.includes(':')) {
+                    let p = strVal.split(':'); return (p[0]||'00').padStart(2,'0') + ':' + (p[1]||'00').padStart(2,'0') + ':' + (p[2]||'00').padStart(2,'0');
+                }
+                return strVal;
+            };
+
+            const fLogin = formatTime(l["Login Time"]);
+            const fLogout = formatTime(l["Logout Time"]);
+
+            // 3. Calculate Live Duration (Difference between Logout and Login)
+            let calcDuration = "";
+            if (fLogin && fLogout) {
+                // Convert HH:MM:SS to total seconds
+                const toSeconds = (t) => {
+                    let p = t.split(':');
+                    return (parseInt(p[0]) * 3600) + (parseInt(p[1]) * 60) + parseInt(p[2]);
+                };
+                
+                let diff = toSeconds(fLogout) - toSeconds(fLogin);
+                
+                // If logout is on the next day (passed midnight)
+                if (diff < 0) {
+                    diff += 24 * 3600; 
+                }
+                
+                // Convert back to HH:MM:SS
+                let h = String(Math.floor(diff / 3600)).padStart(2, '0');
+                let m = String(Math.floor((diff % 3600) / 60)).padStart(2, '0');
+                let s = String(diff % 60).padStart(2, '0');
+                
+                calcDuration = `${h}:${m}:${s}`;
+            }
+
+            const actualIndex = dbLogs.indexOf(l); // Track exact position for instant UI removal
+
+            tbody.innerHTML += `<tr>
+                <td>${dateStr}</td>
+                <td>${l["User ID"]}</td>
+                <td>${l["Name"]}</td>
+                <td>${fLogin}</td>
+                <td>${fLogout}</td>
+                <td>${calcDuration}</td>
+                <td><button class="logout-btn" style="padding:5px; font-size:12px; margin:0;" onclick="deleteLog('${l["User ID"]}', '${dateStr}', '${fLogin}', ${actualIndex})">Delete</button></td>
+            </tr>`;
+        });
+    }
+
+    async function deleteLog(userId, dateStr, loginTime, localIndex) {
+        if(!confirm(`Delete log for ${userId}?`)) return;
+        showLoader("Deleting Log...");
+        try {
+            await fetch(EXEC_URL, { 
+                method:'POST', 
+                body: JSON.stringify({
+                    action: 'manageLog', 
+                    subAction: 'delete', 
+                    target: { userId: userId, date: dateStr, loginTime: loginTime }
+                }) 
+            });
+            
+            // Instantly remove from local memory array so it vanishes from the UI immediately
+            if (localIndex > -1) {
+                dbLogs.splice(localIndex, 1);
+            }
+            
+            renderLogTable(); 
+            hideLoader(); 
+            showMessage("Log deleted successfully!");
+        } catch(e) { 
+            hideLoader(); 
+            showMessage("Error deleting log.", true); 
+        }
     }
 
 
@@ -575,6 +652,7 @@
             generateStudentSlots(parseInt(data["No of Participants"])||1);
         } else { clearItemDetails(); document.getElementById('studentsContainer').innerHTML="<p style='color:red;'>Select Fest and Item.</p>"; }
     }
+    
     function clearItemDetails() { ['itemCode','category','participants','duration'].forEach(id => document.getElementById(id).value = ""); }
 
     function generateStudentSlots(count) {
