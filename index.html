@@ -402,7 +402,15 @@
         try {
             const res = await (await fetch(EXEC_URL, {method: 'POST', body: JSON.stringify({action: 'logLogin', userId: id, name, role})})).json();
             sessionRow = res.row;
-        } catch (e) {}
+
+            const d = new Date();
+            dbLogs.push({
+                "Date": d.toISOString(), "Time": d.toLocaleTimeString('en-GB'), "User ID": id, "Name": name, 
+                "Role": role, "Login Time": d.toLocaleTimeString('en-GB'), "Logout Time": "", "Duration": ""
+            });
+            if (document.getElementById('AdminTab').style.display === 'block') renderLogTable();
+            
+        } catch (e) { console.log("Logging failed"); }
     }
 
     function sendLogoutLog() {
@@ -412,14 +420,12 @@
                 method: 'POST', keepalive: true,
                 body: JSON.stringify({ action: 'logLogout', row: sessionRow, duration: duration })
             }).catch(e=>{});
-            sessionRow = null;
         }
     }
 
     document.addEventListener("visibilitychange", () => {
         if (document.hidden) {
             if (currentUser && currentUser.role === "Student") logout(false); 
-            else if (currentUser && currentUser.role === "Official") sendLogoutLog();
         }
     });
 
@@ -429,13 +435,16 @@
 
     async function logout(manual=true) {
         if(!currentUser) return;
+        
         clearInterval(timerInterval);
         if(manual) showLoader("Logging out...");
         
         sendLogoutLog();
+        sessionRow = null; 
         
         if(manual && currentUser.role==="Official") localStorage.removeItem("uthsavOfficial");
         currentUser = null;
+        
         if(manual) window.location.reload();
         else { document.getElementById('loginScreen').style.display='flex'; document.getElementById('appScreen').style.display='none'; document.getElementById('loginPhone').value=''; }
     }
@@ -536,16 +545,10 @@
     }
 
     // Logs
-   
-   
-
-    // Logs
     function renderLogTable() {
-        const tbody = document.getElementById('adminLogTable'); 
-        tbody.innerHTML = "";
+        const tbody = document.getElementById('adminLogTable'); tbody.innerHTML = "";
         
         [...dbLogs].reverse().forEach(l => {
-            // 1. Format Date
             let dateStr = "";
             if (l["Date"]) {
                 let d = new Date(l["Date"]);
@@ -553,7 +556,6 @@
                 else dateStr = String(l["Date"]).split('T')[0];
             }
             
-            // 2. Format Time Helper
             const formatTime = (val) => {
                 if (!val) return "";
                 let d = new Date(val);
@@ -568,39 +570,23 @@
             const fLogin = formatTime(l["Login Time"]);
             const fLogout = formatTime(l["Logout Time"]);
 
-            // 3. Calculate Live Duration (Difference between Logout and Login)
             let calcDuration = "";
             if (fLogin && fLogout) {
-                // Convert HH:MM:SS to total seconds
-                const toSeconds = (t) => {
-                    let p = t.split(':');
-                    return (parseInt(p[0]) * 3600) + (parseInt(p[1]) * 60) + parseInt(p[2]);
-                };
-                
+                const toSeconds = (t) => { let p = t.split(':'); return (parseInt(p[0]) * 3600) + (parseInt(p[1]) * 60) + parseInt(p[2]); };
                 let diff = toSeconds(fLogout) - toSeconds(fLogin);
-                
-                // If logout is on the next day (passed midnight)
-                if (diff < 0) {
-                    diff += 24 * 3600; 
-                }
-                
-                // Convert back to HH:MM:SS
+                if (diff < 0) diff += 24 * 3600; 
                 let h = String(Math.floor(diff / 3600)).padStart(2, '0');
                 let m = String(Math.floor((diff % 3600) / 60)).padStart(2, '0');
                 let s = String(diff % 60).padStart(2, '0');
-                
                 calcDuration = `${h}:${m}:${s}`;
+            } else if (fLogin && !fLogout) {
+                calcDuration = "<span style='color:#27ae60; font-weight:bold;'>🟢 Active Now</span>";
             }
 
-            const actualIndex = dbLogs.indexOf(l); // Track exact position for instant UI removal
+            const actualIndex = dbLogs.indexOf(l);
 
             tbody.innerHTML += `<tr>
-                <td>${dateStr}</td>
-                <td>${l["User ID"]}</td>
-                <td>${l["Name"]}</td>
-                <td>${fLogin}</td>
-                <td>${fLogout}</td>
-                <td>${calcDuration}</td>
+                <td>${dateStr}</td><td>${l["User ID"]}</td><td>${l["Name"]}</td><td>${fLogin}</td><td>${fLogout}</td><td>${calcDuration}</td>
                 <td><button class="logout-btn" style="padding:5px; font-size:12px; margin:0;" onclick="deleteLog('${l["User ID"]}', '${dateStr}', '${fLogin}', ${actualIndex})">Delete</button></td>
             </tr>`;
         });
@@ -610,29 +596,11 @@
         if(!confirm(`Delete log for ${userId}?`)) return;
         showLoader("Deleting Log...");
         try {
-            await fetch(EXEC_URL, { 
-                method:'POST', 
-                body: JSON.stringify({
-                    action: 'manageLog', 
-                    subAction: 'delete', 
-                    target: { userId: userId, date: dateStr, loginTime: loginTime }
-                }) 
-            });
-            
-            // Instantly remove from local memory array so it vanishes from the UI immediately
-            if (localIndex > -1) {
-                dbLogs.splice(localIndex, 1);
-            }
-            
-            renderLogTable(); 
-            hideLoader(); 
-            showMessage("Log deleted successfully!");
-        } catch(e) { 
-            hideLoader(); 
-            showMessage("Error deleting log.", true); 
-        }
+            await fetch(EXEC_URL, { method:'POST', body: JSON.stringify({action: 'manageLog', subAction: 'delete', target: {userId: userId, date: dateStr, loginTime: loginTime}}) });
+            if (localIndex > -1) dbLogs.splice(localIndex, 1);
+            renderLogTable(); hideLoader(); showMessage("Log deleted!");
+        } catch(e) { hideLoader(); showMessage("Error deleting log.", true); }
     }
-
 
     // --- REGISTRATION LOGIC ---
     function populateItems() {
@@ -652,7 +620,6 @@
             generateStudentSlots(parseInt(data["No of Participants"])||1);
         } else { clearItemDetails(); document.getElementById('studentsContainer').innerHTML="<p style='color:red;'>Select Fest and Item.</p>"; }
     }
-    
     function clearItemDetails() { ['itemCode','category','participants','duration'].forEach(id => document.getElementById(id).value = ""); }
 
     function generateStudentSlots(count) {
