@@ -32,8 +32,11 @@
         .container { max-width: 1200px; margin: auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
         .section { background: #fdfdfd; padding: 15px; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 20px; }
         .section-title { margin-top: 0; color: #34495e; font-size: 18px; border-bottom: 1px solid #ccc; padding-bottom: 5px; }
-        .form-group { display: flex; flex-direction: column; margin-bottom: 15px; }
-        
+        .form-group { display: flex; flex-direction: column; margin-bottom: 15px; min-width: 0; }
+        .form-group label { font-weight: bold; margin-bottom: 5px; font-size: 14px; }
+        .form-group input, .form-group select { width: 100%; max-width: 100%; box-sizing: border-box; text-overflow: ellipsis; }
+        input, select, button { padding: 10px; font-size: 14px; border: 1px solid #ccc; border-radius: 4px; font-family: inherit; }
+        .row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; width: 100%; }
         .submit-btn, .action-btn { background-color: #2980b9; color: white; border: none; cursor: pointer; font-weight: bold; padding: 10px; border-radius: 4px;}
         input[readonly] { background-color: #e9ecef; }
         
