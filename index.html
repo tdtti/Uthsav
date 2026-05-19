@@ -33,9 +33,7 @@
         .section { background: #fdfdfd; padding: 15px; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 20px; }
         .section-title { margin-top: 0; color: #34495e; font-size: 18px; border-bottom: 1px solid #ccc; padding-bottom: 5px; }
         .form-group { display: flex; flex-direction: column; margin-bottom: 15px; }
-        .form-group label { font-weight: bold; margin-bottom: 5px; font-size: 14px; }
-        input, select, button { padding: 10px; font-size: 14px; border: 1px solid #ccc; border-radius: 4px; }
-        .row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        
         .submit-btn, .action-btn { background-color: #2980b9; color: white; border: none; cursor: pointer; font-weight: bold; padding: 10px; border-radius: 4px;}
         input[readonly] { background-color: #e9ecef; }
         
@@ -89,28 +87,23 @@
 <div id="loadingOverlay">
     <div style="position: relative; width: 100px; height: 100px; display: flex; justify-content: center; align-items: center;">
         <div class="spinner-ring"></div>
-        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg9em2FlN1IV3wTcWHsMGckOmehO1rE2M_rYvOgViLmjE63dr_I1WfPVjifwJIhC6ZjuOaUxRdGABp7tqa2g53XJldMIQNl2mWCPkZt26dc4tudkwXlg7WwRfupGFVclKDWSmt9pS9_2i5BI4OSL1GyxAEs8uLxi7uzcysJoJyTBd7gh0Q/s1600/Logo2.png" style="width: 60px; height: 60px; border-radius: 50%;" alt="Loading">
+        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi2HmTkhP64w7LZ-QM-8pKCHZlTVF-KqbMxXQ1h58-M40ZIu7kzPhoFX6FXk8eTCNlTu790kueQvpQCmzWcG-rtMkAL-_8z1MsXMT8a0RzAlWC4hfk3u2Dg-PXD8MKrw3ZYAl-PtcgCalvOVihtu9RSS2oP25dUrNyjtgLDdgz9wYyAr_A/s1600/Logo2.png" style="width: 60px; height: 60px; border-radius: 50%;" alt="Loading">
     </div>
-    <center><div id="loadingText" style="margin-top: 15px; font-weight: bold; color: #2c3e50;">TDTTI<br>Thuravoor</div></center>
+    <div id="loadingText" style="margin-top: 15px; font-weight: bold; color: #2c3e50;">Loading System...</div>
 </div>
 
 <!-- 1. LOGIN SCREEN -->
 <div id="loginScreen">
     <div class="login-box">
-        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg9em2FlN1IV3wTcWHsMGckOmehO1rE2M_rYvOgViLmjE63dr_I1WfPVjifwJIhC6ZjuOaUxRdGABp7tqa2g53XJldMIQNl2mWCPkZt26dc4tudkwXlg7WwRfupGFVclKDWSmt9pS9_2i5BI4OSL1GyxAEs8uLxi7uzcysJoJyTBd7gh0Q/s1600/Logo2.png" alt="School Logo">
+        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi2HmTkhP64w7LZ-QM-8pKCHZlTVF-KqbMxXQ1h58-M40ZIu7kzPhoFX6FXk8eTCNlTu790kueQvpQCmzWcG-rtMkAL-_8z1MsXMT8a0RzAlWC4hfk3u2Dg-PXD8MKrw3ZYAl-PtcgCalvOVihtu9RSS2oP25dUrNyjtgLDdgz9wYyAr_A/s1600/Logo2.png" alt="School Logo">
         <h2>UTHSAV LOGIN</h2>
         <div class="login-tabs">
             <button id="tabStudent" class="active" onclick="switchLogin('student')">Student</button>
             <button id="tabOfficial" onclick="switchLogin('official')">Official</button>
         </div>
         <div id="formStudent" class="login-form active">
-            <label>User ID </label>
-            <input type="text" id="loginPhone" placeholder="User Id">
-            <label>Password </label>
-            <input type="password" id="loginStudentPass" placeholder="Password">
-            <p style="font-size:12px; color:#7f8c8d; margin-top:-10px; margin-bottom:15px;">
-                
-            </p>
+            <label>Registered Phone Number</label>
+            <input type="text" id="loginPhone" placeholder="Enter Phone Number...">
             <button class="login-btn" onclick="loginStudent()">Login as Student</button>
         </div>
         <div id="formOfficial" class="login-form">
@@ -131,7 +124,7 @@
 <div id="appScreen">
     <div class="app-header">
         <div class="header-left">
-            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg9em2FlN1IV3wTcWHsMGckOmehO1rE2M_rYvOgViLmjE63dr_I1WfPVjifwJIhC6ZjuOaUxRdGABp7tqa2g53XJldMIQNl2mWCPkZt26dc4tudkwXlg7WwRfupGFVclKDWSmt9pS9_2i5BI4OSL1GyxAEs8uLxi7uzcysJoJyTBd7gh0Q/s1600/Logo2.png" alt="School Logo">
+            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi2HmTkhP64w7LZ-QM-8pKCHZlTVF-KqbMxXQ1h58-M40ZIu7kzPhoFX6FXk8eTCNlTu790kueQvpQCmzWcG-rtMkAL-_8z1MsXMT8a0RzAlWC4hfk3u2Dg-PXD8MKrw3ZYAl-PtcgCalvOVihtu9RSS2oP25dUrNyjtgLDdgz9wYyAr_A/s1600/Logo2.png" alt="School Logo">
             <div>
                 <h1>UTHSAV REGISTRATION</h1>
                 <h3 style="margin:0; color:#7f8c8d;">TDTTI Thuravoor</h3>
@@ -288,16 +281,9 @@
 
             <div class="section">
                 <h4 class="section-title">Manage Login Logs</h4>
-                <div class="filters" style="margin-bottom: 15px;">
-                    <select id="filterLogRole" onchange="renderLogTable()" style="max-width: 250px;">
-                        <option value="ALL">All Roles</option>
-                        <option value="Official">Officials Only</option>
-                        <option value="Student">Students Only</option>
-                    </select>
-                </div>
                 <div class="table-responsive">
-                    <table style="min-width: 900px;">
-                        <thead><tr><th>Date</th><th>User ID</th><th>Name</th><th>Role</th><th>Login Time</th><th>Logout Time</th><th>Duration</th><th>Actions</th></tr></thead>
+                    <table style="min-width: 800px;">
+                        <thead><tr><th>Date</th><th>User ID</th><th>Name</th><th>Login Time</th><th>Logout Time</th><th>Duration</th><th>Actions</th></tr></thead>
                         <tbody id="adminLogTable"></tbody>
                     </table>
                 </div>
@@ -370,26 +356,10 @@
 
     function loginStudent() {
         const ph = document.getElementById('loginPhone').value.trim();
-        const pass = document.getElementById('loginStudentPass').value.trim().toLowerCase();
-        
-        if(!ph || !pass) return showMessage("Enter Phone and Password", true);
-        
-        const st = dbStudents.find(s => {
-            // 1. Check Phone Number
-            if (String(s["Phone No"]).trim() !== ph) return false;
-            
-            // 2. Generate expected password: First 3 letters of Name (no spaces) + @ + Admn No
-            const namePart = String(s["Name"]).replace(/\s+/g, '').substring(0, 3).toLowerCase();
-            const expectedPass = namePart + "@" + String(s["Admission Number"]).toLowerCase();
-            
-            return pass === expectedPass;
-        });
-        
-        if(st) {
-            startSession(st["Admission Number"], st["Name"], "Student");
-        } else {
-            showMessage("Invalid Phone Number or Password.", true);
-        }
+        if(!ph) return showMessage("Enter Phone", true);
+        const st = dbStudents.find(s => String(s["Phone No"]) === ph);
+        if(st) startSession(st["Admission Number"], st["Name"], "Student");
+        else showMessage("Phone not found.", true);
     }
 
     function loginOfficial() {
@@ -413,10 +383,12 @@
             document.getElementById('logoutBtn').style.display = 'none';
             document.getElementById('adminFilters').style.display = 'none'; 
             document.getElementById('btnAdminTab').style.display = 'none';
+            document.getElementById('filterSearch').style.display = 'none'; // Hides Search from Students
         } else {
             document.getElementById('logoutBtn').style.display = 'inline-block';
             document.getElementById('adminFilters').style.display = 'contents';
             document.getElementById('btnAdminTab').style.display = 'inline-block';
+            document.getElementById('filterSearch').style.display = ''; // Shows Search to Officials
         }
 
         applySettingsToUI(); 
@@ -575,13 +547,8 @@
     // Logs
     function renderLogTable() {
         const tbody = document.getElementById('adminLogTable'); tbody.innerHTML = "";
-        const roleFilter = document.getElementById('filterLogRole') ? document.getElementById('filterLogRole').value : "ALL";
         
         [...dbLogs].reverse().forEach(l => {
-            // Apply Role Filter
-            const logRole = l["Role"] || "Official";
-            if (roleFilter !== "ALL" && logRole !== roleFilter) return;
-
             let dateStr = "";
             if (l["Date"]) {
                 let d = new Date(l["Date"]);
@@ -619,7 +586,7 @@
             const actualIndex = dbLogs.indexOf(l);
 
             tbody.innerHTML += `<tr>
-                <td>${dateStr}</td><td>${l["User ID"]}</td><td>${l["Name"]}</td><td>${logRole}</td><td>${fLogin}</td><td>${fLogout}</td><td>${calcDuration}</td>
+                <td>${dateStr}</td><td>${l["User ID"]}</td><td>${l["Name"]}</td><td>${fLogin}</td><td>${fLogout}</td><td>${calcDuration}</td>
                 <td><button class="logout-btn" style="padding:5px; font-size:12px; margin:0;" onclick="deleteLog('${l["User ID"]}', '${dateStr}', '${fLogin}', ${actualIndex})">Delete</button></td>
             </tr>`;
         });
