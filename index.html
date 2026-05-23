@@ -268,7 +268,7 @@
                     <div class="form-group"><label>Name</label><input type="text" id="manageUserName" placeholder="Name"></div>
                     <div class="form-group"><label>Password</label><input type="text" id="manageUserPass" placeholder="Password"></div>
                     <div class="form-group"><label>Role</label><input type="text" id="manageUserRole" placeholder="e.g. Official"></div>
-                    <div class="form-group"><label>Access</label><input type="text" id="manageUserAccess" placeholder="e.g. All"></div>
+                    <div class="form-group"><label>Access (1=Reg, 2=Rec, 3=Admin)</label><input type="text" id="manageUserAccess" placeholder="e.g. 1,2,3"></div>
                     <div class="form-group" style="justify-content: flex-end;">
                         <input type="hidden" id="manageTargetId" value="">
                         <button class="action-btn" style="background:#27ae60;" onclick="submitUser()">Save / Add User</button>
@@ -325,29 +325,52 @@
     }
 
     // --- INIT ---
+    // --- INIT ---
     window.onload = async function() {
         try {
             const res = await fetch(EXEC_URL + "?action=getData");
             const data = await res.json();
-            dbStudents = data.students || []; 
-            dbFests = data.fests || [];
-            dbRegistrations = data.registrations || []; 
-            dbUsers = data.users || [];
-            dbLogs = data.logs || [];
+            dbStudents = data.students || []; dbFests = data.fests || [];
+            dbRegistrations = data.registrations || []; dbUsers = data.users || []; dbLogs = data.logs || [];
             
             if (data.settings) data.settings.forEach(s => dbSettings[s.Key] = s.Value);
 
             const classes = [...new Set(dbStudents.map(s => s["Class"]))].filter(Boolean).sort();
             classes.forEach(c => document.getElementById('filterClass').innerHTML += `<option value="${c}">${c}</option>`);
-            
             const divs = [...new Set(dbStudents.map(s => s["Division"]))].filter(Boolean).sort();
             divs.forEach(d => document.getElementById('filterDivision').innerHTML += `<option value="${d}">${d}</option>`);
 
             hideLoader();
             const saved = localStorage.getItem("uthsavOfficial");
-            if (saved) { let u = JSON.parse(saved); startSession(u.id, u.name, "Official"); }
+            if (saved) { 
+                let u = JSON.parse(saved); 
+                startSession(u.id, u.name, "Official", u.access); 
+            }
         } catch (err) { hideLoader(); showMessage("Database Connection Error.", true); }
     };
+
+    function loginStudent() {
+        const ph = document.getElementById('loginPhone').value.trim();
+        if(!ph) return showMessage("Enter Phone", true);
+        const st = dbStudents.find(s => String(s["Phone No"]) === ph);
+        // Pass "1,2" because Students always get Reg(1) and Records(2)
+        if(st) startSession(st["Admission Number"], st["Name"], "Student", "1,2");
+        else showMessage("Phone not found.", true);
+    }
+
+    function loginOfficial() {
+        const id = document.getElementById('loginId').value.trim(), pass = document.getElementById('loginPass').value.trim();
+        if(!id || !pass) return showMessage("Enter Credentials", true);
+        const u = dbUsers.find(x => x["User ID"]==id && x["Password"]==pass);
+        if(u) {
+            if(document.getElementById('keepLoggedIn').checked) {
+                // Save access to local storage
+                localStorage.setItem("uthsavOfficial", JSON.stringify({id: u["User ID"], name: u["Name"], access: u["Access"]}));
+            }
+            // Pass the user's specific access string (e.g., "1,2,3")
+            startSession(u["User ID"], u["Name"], u["Role"], u["Access"]);
+        } else showMessage("Invalid Credentials.", true);
+    }
 
     // --- LOGIN & SESSION ---
     function switchLogin(t) {
@@ -357,41 +380,38 @@
         document.getElementById('formOfficial').className = t==='official'?'login-form active':'login-form';
     }
 
-    function loginStudent() {
-        const ph = document.getElementById('loginPhone').value.trim();
-        if(!ph) return showMessage("Enter Phone", true);
-        const st = dbStudents.find(s => String(s["Phone No"]) === ph);
-        if(st) startSession(st["Admission Number"], st["Name"], "Student");
-        else showMessage("Phone not found.", true);
-    }
+    
 
-    function loginOfficial() {
-        const id = document.getElementById('loginId').value.trim(), pass = document.getElementById('loginPass').value.trim();
-        if(!id || !pass) return showMessage("Enter Credentials", true);
-        const u = dbUsers.find(x => x["User ID"]==id && x["Password"]==pass);
-        if(u) {
-            if(document.getElementById('keepLoggedIn').checked) localStorage.setItem("uthsavOfficial", JSON.stringify({id: u["User ID"], name: u["Name"]}));
-            startSession(u["User ID"], u["Name"], u["Role"]);
-        } else showMessage("Invalid Credentials.", true);
-    }
-
-    async function startSession(id, name, role) {
-        currentUser = { id, name, role };
+    async function startSession(id, name, role, access = "") {
+        currentUser = { id, name, role, access };
         document.getElementById('loginScreen').style.display = 'none';
         document.getElementById('appScreen').style.display = 'block';
         document.getElementById('headerName').innerText = name;
         document.getElementById('headerRole').innerText = role;
         
+        // --- DEFINE TAB ACCESS BASED ON NUMBERS ---
+        const strAccess = String(access);
+        const btnReg = document.getElementById('btnRegTab');
+        const btnRec = document.getElementById('btnRecTab');
+        const btnAdmin = document.getElementById('btnAdminTab');
+
+        // Show/Hide buttons based on access code
+        btnReg.style.display = strAccess.includes("1") ? 'inline-block' : 'none';
+        btnRec.style.display = strAccess.includes("2") ? 'inline-block' : 'none';
+        btnAdmin.style.display = strAccess.includes("3") ? 'inline-block' : 'none';
+
+        // Auto-open the highest priority tab they have access to
+        if (strAccess.includes("1")) openTab('RegTab');
+        else if (strAccess.includes("2")) openTab('RecTab');
+        else if (strAccess.includes("3")) openTab('AdminTab');
+        
+        // Role specific UI adjustments
         if (role === "Student") {
             document.getElementById('logoutBtn').style.display = 'none';
             document.getElementById('adminFilters').style.display = 'none'; 
-            document.getElementById('btnAdminTab').style.display = 'none';
-            document.getElementById('filterSearch').style.display = 'none'; // Hides Search from Students
         } else {
             document.getElementById('logoutBtn').style.display = 'inline-block';
             document.getElementById('adminFilters').style.display = 'contents';
-            document.getElementById('btnAdminTab').style.display = 'inline-block';
-            document.getElementById('filterSearch').style.display = ''; // Shows Search to Officials
         }
 
         applySettingsToUI(); 
