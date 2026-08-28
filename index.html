@@ -4,83 +4,88 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Uthsav - TDTTI Thuravoor</title>
+    
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; margin: 0; padding: 0; }
+        :root { --primary: #2980b9; --dark: #2c3e50; --success: #27ae60; --danger: #e74c3c; --bg: #f4f7f6; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg); margin: 0; padding: 0; color: #333; }
         * { box-sizing: border-box; }
         
         /* LOGIN SCREEN */
-        #loginScreen { display: flex; justify-content: center; align-items: center; min-height: 100vh; background: linear-gradient(135deg, #2c3e50, #3498db); padding: 20px;}
-        .login-box { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 8px 16px rgba(0,0,0,0.2); width: 100%; max-width: 400px; text-align: center; }
-        .login-box img { max-width: 80px; margin-bottom: 10px; }
+        #loginScreen { display: flex; justify-content: center; align-items: center; min-height: 100vh; background: linear-gradient(135deg, var(--dark), var(--primary)); padding: 20px;}
+        .login-box { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); width: 100%; max-width: 400px; text-align: center; }
+        .login-box img { max-width: 90px; margin-bottom: 10px; }
         .login-tabs { display: flex; margin-bottom: 20px; border-bottom: 2px solid #ddd; }
-        .login-tabs button { flex: 1; padding: 10px; background: none; border: none; font-size: 16px; font-weight: bold; color: #7f8c8d; cursor: pointer; transition: 0.3s; }
-        .login-tabs button.active { color: #2980b9; border-bottom: 3px solid #2980b9; }
+        .login-tabs button { flex: 1; padding: 12px; background: none; border: none; font-size: 16px; font-weight: bold; color: #7f8c8d; cursor: pointer; transition: 0.3s; }
+        .login-tabs button.active { color: var(--primary); border-bottom: 3px solid var(--primary); }
         .login-form { display: none; text-align: left; }
         .login-form.active { display: block; }
-        .login-form input { width: 100%; padding: 10px; margin: 8px 0 15px; border: 1px solid #ccc; border-radius: 5px; }
-        .login-btn { width: 100%; padding: 12px; background: #27ae60; color: white; border: none; border-radius: 5px; font-size: 16px; font-weight: bold; cursor: pointer; }
+        .login-form input { width: 100%; padding: 12px; margin: 8px 0 15px; border: 1px solid #ccc; border-radius: 6px; }
+        .login-btn { width: 100%; padding: 14px; background: var(--success); color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; }
         
-        /* MAIN APP STYLES */
+        /* MAIN APP HEADER */
         #appScreen { display: none; padding: 10px 20px; }
-        .app-header { background: #fff; padding: 15px 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; max-width: 1200px; margin-left: auto; margin-right: auto; flex-wrap: wrap; gap: 15px;}
+        .app-header { background: #fff; padding: 15px 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; max-width: 1200px; margin: 0 auto 20px auto; flex-wrap: wrap; gap: 15px;}
         .header-left { display: flex; align-items: center; gap: 15px; }
         .header-left img { max-width: 60px; }
-        .header-left h1 { margin: 0; font-size: 24px; color: #2c3e50;}
-        .header-right { text-align: right; font-size: 14px; color: #34495e; font-weight: bold;}
-        .logout-btn { background: #e74c3c; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; margin-top: 5px; font-weight: bold;}
+        .header-left h1 { margin: 0; font-size: 22px; color: var(--dark);}
+        .header-right { text-align: right; font-size: 13px; font-weight: bold;}
+        .logout-btn { background: var(--danger); color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; margin-top: 5px; font-weight: bold;}
 
-        .container { max-width: 1200px; margin: auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
-        .section { background: #fdfdfd; padding: 15px; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 20px; }
-        .section-title { margin-top: 0; color: #34495e; font-size: 18px; border-bottom: 1px solid #ccc; padding-bottom: 5px; }
-        .form-group { display: flex; flex-direction: column; margin-bottom: 15px; min-width: 0; }
-        .form-group label { font-weight: bold; margin-bottom: 5px; font-size: 14px; }
-        .form-group input, .form-group select { width: 100%; max-width: 100%; box-sizing: border-box; text-overflow: ellipsis; }
-        input, select, button { padding: 10px; font-size: 14px; border: 1px solid #ccc; border-radius: 4px; font-family: inherit; }
-        .row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; width: 100%; }
-        .submit-btn, .action-btn { background-color: #2980b9; color: white; border: none; cursor: pointer; font-weight: bold; padding: 10px; border-radius: 4px;}
-        input[readonly] { background-color: #e9ecef; }
-        
-        /* TABS */
-        .tab { overflow: hidden; border-bottom: 2px solid #2980b9; margin-bottom: 20px; display: flex;}
-        .tab button { background-color: inherit; border: none; outline: none; cursor: pointer; padding: 12px 20px; font-size: 16px; font-weight: bold; color: #7f8c8d; transition: 0.3s;}
-        .tab button.active { background-color: #2980b9; color: white; border-radius: 5px 5px 0 0; }
-        .tabcontent { display: none; }
-        
-        .student-block { border: 2px dashed #bdc3c7; padding: 15px; border-radius: 5px; margin-bottom: 15px; background: #fafafa; }
-        .leader-box { background: #ffeaa7; padding: 10px; border-radius: 5px; margin-bottom: 15px; border: 1px solid #fdcb6e; display: inline-block;}
-        
-        /* AUTOCOMPLETE */
+        .container { max-width: 1200px; margin: auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .section { background: #fdfdfd; padding: 20px; border: 1px solid #eee; border-radius: 8px; margin-bottom: 25px; }
+        .section-title { margin-top: 0; color: var(--dark); font-size: 18px; border-bottom: 2px solid #eee; padding-bottom: 10px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+        .form-group { display: flex; flex-direction: column; margin-bottom: 15px; }
+        .form-group label { font-weight: bold; margin-bottom: 6px; font-size: 14px; color: #555; }
+        input, select, button, textarea { padding: 12px; font-size: 14px; border: 1px solid #ccc; border-radius: 6px; font-family: inherit; }
+        .row { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; }
+        .submit-btn { background-color: var(--primary); color: white; border: none; cursor: pointer; font-weight: bold; font-size: 16px; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px;}
+        .action-btn { background-color: var(--primary); color: white; border: none; cursor: pointer; font-weight: bold; padding: 10px 20px; border-radius: 6px; }
+
+        /* TAB NAVIGATION */
+        .tab { display: flex; gap: 10px; margin-bottom: 25px; border-bottom: 2px solid #eee; padding-bottom: 2px; }
+        .tab button { background: #eee; border: none; padding: 12px 20px; cursor: pointer; font-weight: bold; color: #666; border-radius: 8px 8px 0 0; display: flex; align-items: center; gap: 8px; transition: 0.3s; }
+        .tab button i { font-size: 18px; }
+        .tab button.active { background: var(--primary); color: white; }
+        .tabcontent { display: none; animation: fadeIn 0.4s; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* CARD STYLE FOR RECORDS */
+        .records-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; margin-top: 15px; }
+        .record-card { background: white; border: 1px solid #e0e0e0; border-radius: 10px; padding: 15px; position: relative; border-left: 6px solid var(--primary); box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
+        .record-card.group-card { border-left-color: #f39c12; }
+        .record-card h4 { margin: 0 0 10px 0; font-size: 17px; color: var(--dark); display: flex; justify-content: space-between; align-items: center; }
+        .record-card .fest-badge { font-size: 11px; background: #eee; padding: 3px 8px; border-radius: 4px; color: #666; }
+        .record-card p { margin: 5px 0; font-size: 14px; color: #444; display: flex; justify-content: space-between; }
+        .record-card .label { color: #888; font-weight: normal; }
+        .record-card .timestamp { font-size: 11px; color: #aaa; margin-top: 10px; text-align: right; border-top: 1px solid #f9f9f9; padding-top: 5px;}
+
+        /* MISC UI */
+        .student-block { border: 2px dashed #ddd; padding: 15px; border-radius: 8px; margin-bottom: 15px; background: #fafafa; }
+        .leader-box { background: #ffeaa7; padding: 10px; border-radius: 6px; margin-bottom: 15px; border: 1px solid #fdcb6e; display: inline-block; font-size: 13px; font-weight: bold;}
         .autocomplete-container { position: relative; width: 100%; }
-        .autocomplete-items { position: absolute; border: 1px solid #ccc; z-index: 99; top: 100%; left: 0; right: 0; background-color: #fff; max-height: 200px; overflow-y: auto; }
-        .autocomplete-items div { padding: 10px; cursor: pointer; border-bottom: 1px solid #eee; font-size: 14px; }
-        .autocomplete-items div:hover { background-color: #e9ecef; }
+        .autocomplete-items { position: absolute; border: 1px solid #ddd; z-index: 99; top: 100%; left: 0; right: 0; background-color: #fff; max-height: 200px; overflow-y: auto; border-radius: 0 0 6px 6px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .autocomplete-items div { padding: 12px; cursor: pointer; border-bottom: 1px solid #eee; }
+        .autocomplete-items div:hover { background-color: #f1f1f1; }
 
-        /* TABLES */
-        .table-responsive { overflow-x: auto; margin-bottom: 20px; }
-        table { width: 100%; border-collapse: collapse; min-width: 800px; }
-        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; font-size: 13px; }
-        th { background-color: #2c3e50; color: white; cursor: pointer; position: relative;}
-        th:hover { background-color: #34495e; }
-        tr:nth-child(even) { background-color: #f2f2f2; }
-        .filters { display: flex; gap: 15px; margin-bottom: 15px; flex-wrap: wrap;}
-        .filters input, .filters select { flex: 1; min-width: 200px; }
-
-        /* OVERLAYS */
-        #toastMessage { visibility: hidden; min-width: 250px; background-color: #333; color: #fff; text-align: center; border-radius: 5px; padding: 15px; position: fixed; z-index: 1000; left: 50%; bottom: 30px; transform: translateX(-50%); font-size: 16px; transition: 0.3s; }
+        #toastMessage { visibility: hidden; min-width: 250px; background-color: #333; color: #fff; text-align: center; border-radius: 8px; padding: 16px; position: fixed; z-index: 1000; left: 50%; bottom: 30px; transform: translateX(-50%); font-size: 16px; transition: 0.3s; }
         #toastMessage.show { visibility: visible; bottom: 50px; }
-        #toastMessage.error { background-color: #e74c3c; }
-        #loadingOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9); z-index: 999; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-        .spinner-ring { position: absolute; width: 100px; height: 100px; border: 5px solid #f3f3f3; border-top: 5px solid #2980b9; border-radius: 50%; animation: spin 1s linear infinite; }
+        #toastMessage.error { background-color: var(--danger); }
+        #loadingOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.95); z-index: 999; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .spinner-ring { position: absolute; width: 80px; height: 80px; border: 6px solid #f3f3f3; border-top: 6px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        /* Admin Toggles */
-        .fest-toggle-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
-        .fest-toggle { background: #eee; padding: 10px; border-radius: 5px; display: flex; align-items: center; gap: 10px; }
-        
         @media (max-width: 768px) {
-            .row { grid-template-columns: 1fr; }
             .app-header { flex-direction: column; text-align: center; }
-            .header-right { text-align: center; margin-top: 10px; }
+            .header-right { text-align: center; }
+            .tab button span { display: none; }
+            .tab button { padding: 12px 15px; }
         }
     </style>
 </head>
@@ -88,17 +93,17 @@
 
 <div id="toastMessage"></div>
 <div id="loadingOverlay">
-    <div style="position: relative; width: 100px; height: 100px; display: flex; justify-content: center; align-items: center;">
+    <div style="position: relative; width: 80px; height: 80px; display: flex; justify-content: center; align-items: center;">
         <div class="spinner-ring"></div>
-        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi2HmTkhP64w7LZ-QM-8pKCHZlTVF-KqbMxXQ1h58-M40ZIu7kzPhoFX6FXk8eTCNlTu790kueQvpQCmzWcG-rtMkAL-_8z1MsXMT8a0RzAlWC4hfk3u2Dg-PXD8MKrw3ZYAl-PtcgCalvOVihtu9RSS2oP25dUrNyjtgLDdgz9wYyAr_A/s1600/Logo2.png" style="width: 60px; height: 60px; border-radius: 50%;" alt="Loading">
+        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi2HmTkhP64w7LZ-QM-8pKCHZlTVF-KqbMxXQ1h58-M40ZIu7kzPhoFX6FXk8eTCNlTu790kueQvpQCmzWcG-rtMkAL-_8z1MsXMT8a0RzAlWC4hfk3u2Dg-PXD8MKrw3ZYAl-PtcgCalvOVihtu9RSS2oP25dUrNyjtgLDdgz9wYyAr_A/s1600/Logo2.png" style="width: 50px; height: 50px; border-radius: 50%;" alt="Loading">
     </div>
-    <div id="loadingText" style="margin-top: 15px; font-weight: bold; color: #2c3e50;">Loading System...</div>
+    <div id="loadingText" style="margin-top: 20px; font-weight: bold; color: var(--dark);">Loading System...</div>
 </div>
 
 <!-- 1. LOGIN SCREEN -->
 <div id="loginScreen">
     <div class="login-box">
-        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi2HmTkhP64w7LZ-QM-8pKCHZlTVF-KqbMxXQ1h58-M40ZIu7kzPhoFX6FXk8eTCNlTu790kueQvpQCmzWcG-rtMkAL-_8z1MsXMT8a0RzAlWC4hfk3u2Dg-PXD8MKrw3ZYAl-PtcgCalvOVihtu9RSS2oP25dUrNyjtgLDdgz9wYyAr_A/s1600/Logo2.png" alt="School Logo">
+        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi2HmTkhP64w7LZ-QM-8pKCHZlTVF-KqbMxXQ1h58-M40ZIu7kzPhoFX6FXk8eTCNlTu790kueQvpQCmzWcG-rtMkAL-_8z1MsXMT8a0RzAlWC4hfk3u2Dg-PXD8MKrw3ZYAl-PtcgCalvOVihtu9RSS2oP25dUrNyjtgLDdgz9wYyAr_A/s1600/Logo2.png" alt="Logo">
         <h2>UTHSAV LOGIN</h2>
         <div class="login-tabs">
             <button id="tabStudent" class="active" onclick="switchLogin('student')">Student</button>
@@ -111,9 +116,9 @@
         </div>
         <div id="formOfficial" class="login-form">
             <label>User ID</label>
-            <input type="text" id="loginId" placeholder="Enter User ID...">
+            <input type="text" id="loginId" placeholder="User ID">
             <label>Password</label>
-            <input type="password" id="loginPass" placeholder="Enter Password...">
+            <input type="password" id="loginPass" placeholder="Password">
             <div style="margin-bottom: 15px; text-align: left;">
                 <input type="checkbox" id="keepLoggedIn" style="width:auto; margin-right:5px;">
                 <label for="keepLoggedIn" style="font-weight:normal;">Keep me logged in</label>
@@ -127,36 +132,43 @@
 <div id="appScreen">
     <div class="app-header">
         <div class="header-left">
-            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi2HmTkhP64w7LZ-QM-8pKCHZlTVF-KqbMxXQ1h58-M40ZIu7kzPhoFX6FXk8eTCNlTu790kueQvpQCmzWcG-rtMkAL-_8z1MsXMT8a0RzAlWC4hfk3u2Dg-PXD8MKrw3ZYAl-PtcgCalvOVihtu9RSS2oP25dUrNyjtgLDdgz9wYyAr_A/s1600/Logo2.png" alt="School Logo">
+            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi2HmTkhP64w7LZ-QM-8pKCHZlTVF-KqbMxXQ1h58-M40ZIu7kzPhoFX6FXk8eTCNlTu790kueQvpQCmzWcG-rtMkAL-_8z1MsXMT8a0RzAlWC4hfk3u2Dg-PXD8MKrw3ZYAl-PtcgCalvOVihtu9RSS2oP25dUrNyjtgLDdgz9wYyAr_A/s1600/Logo2.png" alt="Logo">
             <div>
-                <h1>UTHSAV REGISTRATION</h1>
-                <h3 style="margin:0; color:#7f8c8d;">TDTTI Thuravoor</h3>
+                <h1>UTHSAV PORTAL</h1>
+                <h4 style="margin:0; color:#7f8c8d;">TDTTI Thuravoor</h4>
             </div>
         </div>
         <div class="header-right">
-            Logged in as: <span id="headerName" style="color:#d35400; font-size:16px;">Name</span> (<span id="headerRole">Role</span>)<br>
-            Session: <span id="sessionTimer" style="color:#d35400;">00:00:00</span><br>
-            <button id="logoutBtn" class="logout-btn" onclick="logout(true)">Logout</button>
+            Logged in: <span id="headerName" style="color:var(--primary);">Name</span> (<span id="headerRole">Role</span>)<br>
+            Session: <span id="sessionTimer" style="color:var(--danger);">00:00:00</span><br>
+            <button class="logout-btn" onclick="logout(true)">Logout</button>
         </div>
     </div>
 
     <div class="container">
+        <!-- ICONIC TABS -->
         <div class="tab">
-            <button id="btnRegTab" class="active" onclick="openTab('RegTab')">Registration</button>
-            <button id="btnRecTab" onclick="openTab('RecTab')">View Records</button>
-            <button id="btnAdminTab" style="display:none;" onclick="openTab('AdminTab')">Admin Dashboard</button>
+            <button id="btnRegTab" class="active" onclick="openTab('RegTab')">
+                <i class="fas fa-user-edit"></i> <span>Registration</span>
+            </button>
+            <button id="btnRecTab" onclick="openTab('RecTab')">
+                <i class="fas fa-layer-group"></i> <span>View Records</span>
+            </button>
+            <button id="btnAdminTab" style="display:none;" onclick="openTab('AdminTab')">
+                <i class="fas fa-cogs"></i> <span>Admin Dashboard</span>
+            </button>
         </div>
 
         <!-- TAB 1: REGISTRATION -->
         <div id="RegTab" class="tabcontent" style="display:block;">
-            <div id="regClosedMsg" style="display:none; text-align:center; padding: 40px; background: #ffeaa7; border-radius:10px; border:2px solid #f39c12;">
+            <div id="regClosedMsg" style="display:none; text-align:center; padding: 40px; background: #ffeaa7; border-radius:12px; border:2px solid #f39c12;">
                 <h2 style="color:#d35400;">Registration is currently closed.</h2>
                 <p id="regCustomMsg" style="font-size:18px; font-weight:bold;"></p>
             </div>
 
             <form id="registrationForm" onsubmit="submitForm(event)">
                 <div class="section">
-                    <h4 class="section-title">Fest & Item Selection</h4>
+                    <h4 class="section-title"><i class="fas fa-trophy"></i> Fest & Item Selection</h4>
                     <div class="row">
                         <div class="form-group">
                             <label>Name of Fest</label>
@@ -174,61 +186,49 @@
                 </div>
 
                 <div class="section">
-                    <h4 class="section-title">Item Details</h4>
+                    <h4 class="section-title"><i class="fas fa-info-circle"></i> Item Details</h4>
                     <div class="row">
-                        <div class="form-group"><label>Item Code</label><input type="text" id="itemCode" readonly required></div>
-                        <div class="form-group"><label>Category</label><input type="text" id="category" readonly required></div>
-                        <div class="form-group"><label>No of Participants</label><input type="text" id="participants" readonly required></div>
-                        <div class="form-group"><label>Duration</label><input type="text" id="duration" readonly required></div>
+                        <div class="form-group"><label>Item Code</label><input type="text" id="itemCode" readonly></div>
+                        <div class="form-group"><label>Category</label><input type="text" id="category" readonly></div>
+                        <div class="form-group"><label>Participants</label><input type="text" id="participants" readonly></div>
+                        <div class="form-group"><label>Duration</label><input type="text" id="duration" readonly></div>
                     </div>
                 </div>
 
                 <div class="section">
-                    <h4 class="section-title">Student Details</h4>
+                    <h4 class="section-title"><i class="fas fa-users"></i> Participant Details</h4>
                     <div id="studentsContainer">
-                        <p style="color:red; font-style:italic;">Please select a Fest and Item first.</p>
+                        <p style="color:#888; font-style:italic;">Please select a Fest and Item to continue.</p>
                     </div>
                 </div>
 
-                <button type="submit" class="submit-btn" style="width:100%; padding: 15px;">Register Student(s)</button>
+                <button type="submit" class="submit-btn" style="width:100%; padding: 18px; border-radius: 8px;">
+                    <i class="fas fa-check-circle"></i> Complete Registration
+                </button>
             </form>
         </div>
 
-        <!-- TAB 2: RECORDS VIEW -->
+        <!-- TAB 2: VIEW RECORDS (CARD STYLE) -->
         <div id="RecTab" class="tabcontent">
-            <div class="filters">
+            <div class="filters" style="margin-bottom: 25px;">
                 <div id="adminFilters" style="display:contents;">
-                    <select id="filterClass" onchange="renderTables()">
-                        <option value="ALL">All Classes</option>
-                    </select>
-                    <select id="filterDivision" onchange="renderTables()">
-                        <option value="ALL">All Divisions</option>
-                    </select>
+                    <select id="filterClass" onchange="renderTables()"><option value="ALL">All Classes</option></select>
+                    <select id="filterDivision" onchange="renderTables()"><option value="ALL">All Divisions</option></select>
                 </div>
-                <input type="text" id="filterSearch" placeholder="Search across all fields..." oninput="renderTables()">
+                <input type="text" id="filterSearch" placeholder="Search by name, item or admn no..." oninput="renderTables()" style="flex:2;">
             </div>
 
             <div class="section">
-                <h4 class="section-title">Individual Items</h4>
-                <div class="table-responsive">
-                    <table id="tableInd">
-                        <thead>
-                            <tr><th onclick="sortTable('tableInd', 0)">Timestamp ↕</th><th onclick="sortTable('tableInd', 1)">Admn No ↕</th><th onclick="sortTable('tableInd', 2)">Name ↕</th><th onclick="sortTable('tableInd', 3)">Class & Div ↕</th><th onclick="sortTable('tableInd', 4)">Fest ↕</th><th onclick="sortTable('tableInd', 5)">Item ↕</th><th onclick="sortTable('tableInd', 6)">Category ↕</th></tr>
-                        </thead>
-                        <tbody id="tbodyInd"></tbody>
-                    </table>
+                <h4 class="section-title"><i class="fas fa-user"></i> Individual Items</h4>
+                <div id="cardsInd" class="records-grid">
+                    <!-- Cards injected here -->
                 </div>
             </div>
 
             <div class="section">
-                <h4 class="section-title">Group Items</h4>
-                <div class="table-responsive">
-                    <table id="tableGrp">
-                        <thead>
-                            <tr><th onclick="sortTable('tableGrp', 0)">Timestamp ↕</th><th onclick="sortTable('tableGrp', 1)">Admn No ↕</th><th onclick="sortTable('tableGrp', 2)">Name ↕</th><th onclick="sortTable('tableGrp', 3)">Class & Div ↕</th><th onclick="sortTable('tableGrp', 4)">Fest ↕</th><th onclick="sortTable('tableGrp', 5)">Item ↕</th><th onclick="sortTable('tableGrp', 6)">Role ↕</th></tr>
-                        </thead>
-                        <tbody id="tbodyGrp"></tbody>
-                    </table>
+                <h4 class="section-title"><i class="fas fa-users-viewfinder"></i> Group Items</h4>
+                <div id="cardsGrp" class="records-grid">
+                    <!-- Cards injected here -->
                 </div>
             </div>
         </div>
@@ -236,77 +236,99 @@
         <!-- TAB 3: ADMIN DASHBOARD -->
         <div id="AdminTab" class="tabcontent">
             <div class="section">
-                <h4 class="section-title">Global Registration Control</h4>
+                <h4 class="section-title"><i class="fas fa-power-off"></i> System Control</h4>
                 <div class="row">
                     <div class="form-group">
-                        <label>Status</label>
-                        <select id="adminGlobalStatus">
-                            <option value="OPEN">Open</option>
-                            <option value="CLOSED">Closed</option>
-                        </select>
+                        <label>Registration Status</label>
+                        <select id="adminGlobalStatus"><option value="OPEN">Open</option><option value="CLOSED">Closed</option></select>
                     </div>
                     <div class="form-group">
-                        <label>Custom Message (If Closed)</label>
-                        <input type="text" id="adminGlobalMsg" placeholder="e.g. Registrations are over.">
+                        <label>Display Message (if closed)</label>
+                        <input type="text" id="adminGlobalMsg" placeholder="e.g. Closed for maintenance">
                     </div>
                 </div>
-                <button class="action-btn" onclick="saveAdminSettings()">Save Registration Status</button>
+                <button class="action-btn" onclick="saveAdminSettings()">Apply Settings</button>
             </div>
 
             <div class="section">
-                <h4 class="section-title">Enable/Disable Fests</h4>
-                <div class="fest-toggle-grid" id="adminFestList">
-                    <!-- Checkboxes populated automatically -->
-                </div>
-                <button class="action-btn" style="margin-top:15px;" onclick="saveAdminSettings()">Save Fest Settings</button>
+                <h4 class="section-title"><i class="fas fa-list-check"></i> Enabled Fests</h4>
+                <div class="fest-toggle-grid" id="adminFestList"></div>
+                <button class="action-btn" style="margin-top:15px;" onclick="saveAdminSettings()">Save Fest Config</button>
             </div>
 
             <div class="section">
-                <h4 class="section-title">Manage Official Logins</h4>
-                <div class="row" style="background:#f2f2f2; padding:15px; border-radius:5px; margin-bottom:15px;">
-                    <div class="form-group"><label>User ID</label><input type="text" id="manageUserId" placeholder="ID"></div>
-                    <div class="form-group"><label>Name</label><input type="text" id="manageUserName" placeholder="Name"></div>
-                    <div class="form-group"><label>Password</label><input type="text" id="manageUserPass" placeholder="Password"></div>
-                    <div class="form-group"><label>Role</label><input type="text" id="manageUserRole" placeholder="e.g. Official"></div>
-                    <div class="form-group"><label>Access (1=Reg, 2=Rec, 3=Admin)</label><input type="text" id="manageUserAccess" placeholder="e.g. 1,2,3"></div>
-                    <div class="form-group" style="justify-content: flex-end;">
-                        <input type="hidden" id="manageTargetId" value="">
-                        <button class="action-btn" style="background:#27ae60;" onclick="submitUser()">Save / Add User</button>
+                <h4 class="section-title"><i class="fas fa-plus"></i> Add Single Item</h4>
+                <div class="row">
+                    <div class="form-group"><label>Fest</label>
+                        <select id="newItemFest">
+                            <option value="General Kalothswom">General Kalothswom</option>
+                            <option value="Sanskrit Kalothswom">Sanskrit Kalothswom</option>
+                            <option value="Arabic Kalothswom">Arabic Kalothswom</option>
+                            <option value="Art Fest">Art Fest</option>
+                            <option value="Work Experience">Work Experience</option>
+                            <option value="Maths Fest">Maths Fest</option>
+                            <option value="Science Fest">Science Fest</option>
+                            <option value="Social Science">Social Science</option>
+                            <option value="IT Fair">IT Fair</option>
+                            <option value="Sports Fest">Sports Fest</option>
+                        </select>
                     </div>
+                    <div class="form-group"><label>Item Name</label><input type="text" id="newItemName"></div>
+                    <div class="form-group"><label>Code</label><input type="text" id="newItemCode"></div>
+                    <div class="form-group"><label>Category</label><select id="newItemCat"><option>General</option><option>Boy</option><option>Girl</option></select></div>
+                    <div class="form-group"><label>Participants</label><input type="number" id="newItemPart" value="1"></div>
+                    <div class="form-group"><label>Duration</label><input type="text" id="newItemDur"></div>
                 </div>
-                <div class="table-responsive">
-                    <table style="min-width: 800px;">
-                        <thead><tr><th>User ID</th><th>Name</th><th>Password</th><th>Role</th><th>Access</th><th>Actions</th></tr></thead>
-                        <tbody id="adminUserTable"></tbody>
-                    </table>
-                </div>
+                <button class="action-btn" onclick="addNewItem()">Save Item</button>
             </div>
 
             <div class="section">
-                <h4 class="section-title">Manage Login Logs</h4>
-                <div class="table-responsive">
-                    <table style="min-width: 800px;">
-                        <thead><tr><th>Date</th><th>User ID</th><th>Name</th><th>Login Time</th><th>Logout Time</th><th>Duration</th><th>Actions</th></tr></thead>
-                        <tbody id="adminLogTable"></tbody>
-                    </table>
+                <h4 class="section-title"><i class="fas fa-file-csv"></i> Bulk Student Upload</h4>
+                <p style="font-size:12px; color:#777; margin-bottom:10px;">Format: AdmissionNo, Name, Class, Division, Gender, Phone</p>
+                <textarea id="bulkStudentData" style="width:100%; height:150px; font-family: monospace;" placeholder="Paste Excel/Sheets rows here..."></textarea>
+                <button class="action-btn" style="background:var(--success); margin-top:10px;" onclick="bulkUploadStudents()">Start Bulk Import</button>
+            </div>
+
+            <div class="section">
+                <h4 class="section-title"><i class="fas fa-user-shield"></i> User Management</h4>
+                <div class="row">
+                    <div class="form-group"><label>User ID</label><input type="text" id="manageUserId"></div>
+                    <div class="form-group"><label>Name</label><input type="text" id="manageUserName"></div>
+                    <div class="form-group"><label>Password</label><input type="text" id="manageUserPass"></div>
+                    <div class="form-group"><label>Access (1,2,3)</label><input type="text" id="manageUserAccess"></div>
+                </div>
+                <button class="action-btn" onclick="submitUser()">Save User</button>
+                <div class="table-responsive" style="margin-top:20px;">
+                    <table style="min-width: 600px;"><thead><tr><th>ID</th><th>Name</th><th>Role</th><th>Access</th><th>Action</th></tr></thead><tbody id="adminUserTable"></tbody></table>
                 </div>
             </div>
         </div>
-
     </div>
 </div>
 
 <script>
-    // --- REPLACE WITH YOUR NEW WEB APP URL ---
-    const EXEC_URL = "https://script.google.com/macros/s/AKfycbwQknfoSG5HNH2M6wk8ucbygDdRjXvyU3dKzczGhduqRnbZzXeZAtbCkNUhO2EaN58Y/exec"; 
-    
-    let dbStudents = [], dbFests = [], dbRegistrations = [], dbUsers = [], dbLogs = [];
+    // --- 1. FIREBASE CONFIG ---
+    const firebaseConfig = {
+  apiKey: "AIzaSyB07u7X5Gto_PBYFFC1fDJ-6YGlvj_DvnU",
+  authDomain: "uthsav-39b6a.firebaseapp.com",
+  projectId: "uthsav-39b6a",
+  storageBucket: "uthsav-39b6a.firebasestorage.app",
+  messagingSenderId: "216337052585",
+  appId: "1:216337052585:web:1c4843f70cfd93f909cab8",
+  measurementId: "G-Y72Q9LPS2Y"
+};
+
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    // --- 2. GLOBAL DATA ---
+    let dbStudents = [], dbFests = [], dbRegistrations = [], dbUsers = [];
     let dbSettings = { Global_Registration: "OPEN", Global_Message: "" }; 
     let allFestNames = ["General Kalothswom", "Sanskrit Kalothswom", "Arabic Kalothswom", "Art Fest", "Work Experience", "Maths Fest", "Science Fest", "Social Science", "IT Fair", "Sports Fest"];
-    
-    let currentUser = null, sessionRow = null, timerInterval = null, sessionSeconds = 0;
+    let currentUser = null, timerInterval = null, sessionSeconds = 0;
 
-    // --- UTILS ---
+    // --- 3. UTILS ---
     function showMessage(msg, isErr=false) {
         const t = document.getElementById("toastMessage");
         t.innerText = msg; t.className = isErr ? "show error" : "show success";
@@ -319,21 +341,28 @@
         document.querySelectorAll('.tabcontent').forEach(t => t.style.display = 'none');
         document.querySelectorAll('.tab button').forEach(b => b.classList.remove('active'));
         document.getElementById(tabId).style.display = 'block';
-        event.currentTarget.classList.add('active');
+        if (window.event) window.event.currentTarget.classList.add('active');
         if(tabId === 'RecTab') renderTables();
         if(tabId === 'AdminTab') renderAdminPanel();
     }
 
-    // --- INIT ---
-    // --- INIT ---
+    // --- 4. INITIALIZATION ---
     window.onload = async function() {
         try {
-            const res = await fetch(EXEC_URL + "?action=getData");
-            const data = await res.json();
-            dbStudents = data.students || []; dbFests = data.fests || [];
-            dbRegistrations = data.registrations || []; dbUsers = data.users || []; dbLogs = data.logs || [];
+            const [stdSnap, festSnap, regSnap, userSnap, setSnap] = await Promise.all([
+                db.collection("students").get(),
+                db.collection("fests").get(),
+                db.collection("registrations").get(),
+                db.collection("users").get(),
+                db.collection("config").doc("settings").get()
+            ]);
+
+            dbStudents = stdSnap.docs.map(doc => doc.data());
+            dbFests = festSnap.docs.map(doc => doc.data());
+            dbRegistrations = regSnap.docs.map(doc => ({...doc.data(), id: doc.id}));
+            dbUsers = userSnap.docs.map(doc => ({...doc.data(), id: doc.id}));
             
-            if (data.settings) data.settings.forEach(s => dbSettings[s.Key] = s.Value);
+            if (setSnap.exists) dbSettings = setSnap.data();
 
             const classes = [...new Set(dbStudents.map(s => s["Class"]))].filter(Boolean).sort();
             classes.forEach(c => document.getElementById('filterClass').innerHTML += `<option value="${c}">${c}</option>`);
@@ -346,33 +375,13 @@
                 let u = JSON.parse(saved); 
                 startSession(u.id, u.name, "Official", u.access); 
             }
-        } catch (err) { hideLoader(); showMessage("Database Connection Error.", true); }
+        } catch (err) { 
+            hideLoader(); 
+            showMessage("Database Error. Check Console.", true); 
+        }
     };
 
-    function loginStudent() {
-        const ph = document.getElementById('loginPhone').value.trim();
-        if(!ph) return showMessage("Enter Phone", true);
-        const st = dbStudents.find(s => String(s["Phone No"]) === ph);
-        // Pass "1,2" because Students always get Reg(1) and Records(2)
-        if(st) startSession(st["Admission Number"], st["Name"], "Student", "1,2");
-        else showMessage("Phone not found.", true);
-    }
-
-    function loginOfficial() {
-        const id = document.getElementById('loginId').value.trim(), pass = document.getElementById('loginPass').value.trim();
-        if(!id || !pass) return showMessage("Enter Credentials", true);
-        const u = dbUsers.find(x => x["User ID"]==id && x["Password"]==pass);
-        if(u) {
-            if(document.getElementById('keepLoggedIn').checked) {
-                // Save access to local storage
-                localStorage.setItem("uthsavOfficial", JSON.stringify({id: u["User ID"], name: u["Name"], access: u["Access"]}));
-            }
-            // Pass the user's specific access string (e.g., "1,2,3")
-            startSession(u["User ID"], u["Name"], u["Role"], u["Access"]);
-        } else showMessage("Invalid Credentials.", true);
-    }
-
-    // --- LOGIN & SESSION ---
+    // --- 5. AUTH ---
     function switchLogin(t) {
         document.getElementById('tabStudent').className = t==='student'?'active':'';
         document.getElementById('tabOfficial').className = t==='official'?'active':'';
@@ -380,7 +389,22 @@
         document.getElementById('formOfficial').className = t==='official'?'login-form active':'login-form';
     }
 
-    
+    function loginStudent() {
+        const ph = document.getElementById('loginPhone').value.trim();
+        const st = dbStudents.find(s => String(s["Phone No"]) === ph);
+        if(st) startSession(st["Admission Number"], st["Name"], "Student", "1,2");
+        else showMessage("Phone number not registered.", true);
+    }
+
+    function loginOfficial() {
+        const id = document.getElementById('loginId').value.trim();
+        const pass = document.getElementById('loginPass').value.trim();
+        const u = dbUsers.find(x => x["User ID"]==id && x["Password"]==pass);
+        if(u) {
+            if(document.getElementById('keepLoggedIn').checked) localStorage.setItem("uthsavOfficial", JSON.stringify({id: u["User ID"], name: u["Name"], access: u["Access"]}));
+            startSession(u["User ID"], u["Name"], u["Role"] || "Official", u["Access"]);
+        } else showMessage("Invalid Credentials.", true);
+    }
 
     async function startSession(id, name, role, access = "") {
         currentUser = { id, name, role, access };
@@ -389,247 +413,36 @@
         document.getElementById('headerName').innerText = name;
         document.getElementById('headerRole').innerText = role;
         
-        // --- DEFINE TAB ACCESS BASED ON NUMBERS ---
         const strAccess = String(access);
-        const btnReg = document.getElementById('btnRegTab');
-        const btnRec = document.getElementById('btnRecTab');
-        const btnAdmin = document.getElementById('btnAdminTab');
+        document.getElementById('btnRegTab').style.display = strAccess.includes("1") ? 'flex' : 'none';
+        document.getElementById('btnRecTab').style.display = strAccess.includes("2") ? 'flex' : 'none';
+        document.getElementById('btnAdminTab').style.display = strAccess.includes("3") ? 'flex' : 'none';
 
-        // Show/Hide buttons based on access code
-        btnReg.style.display = strAccess.includes("1") ? 'inline-block' : 'none';
-        btnRec.style.display = strAccess.includes("2") ? 'inline-block' : 'none';
-        btnAdmin.style.display = strAccess.includes("3") ? 'inline-block' : 'none';
-
-        // Auto-open the highest priority tab they have access to
         if (strAccess.includes("1")) openTab('RegTab');
         else if (strAccess.includes("2")) openTab('RecTab');
-        else if (strAccess.includes("3")) openTab('AdminTab');
         
-        // Role specific UI adjustments
         if (role === "Student") {
-            document.getElementById('logoutBtn').style.display = 'none';
             document.getElementById('adminFilters').style.display = 'none'; 
-        } else {
-            document.getElementById('logoutBtn').style.display = 'inline-block';
-            document.getElementById('adminFilters').style.display = 'contents';
         }
 
         applySettingsToUI(); 
-        
         sessionSeconds = 0; 
         timerInterval = setInterval(()=> {
             sessionSeconds++; 
             document.getElementById('sessionTimer').innerText = new Date(sessionSeconds * 1000).toISOString().substr(11, 8);
         }, 1000);
-
-        try {
-            const res = await (await fetch(EXEC_URL, {method: 'POST', body: JSON.stringify({action: 'logLogin', userId: id, name, role})})).json();
-            sessionRow = res.row;
-
-            const d = new Date();
-            dbLogs.push({
-                "Date": d.toISOString(), "Time": d.toLocaleTimeString('en-GB'), "User ID": id, "Name": name, 
-                "Role": role, "Login Time": d.toLocaleTimeString('en-GB'), "Logout Time": "", "Duration": ""
-            });
-            if (document.getElementById('AdminTab').style.display === 'block') renderLogTable();
-            
-        } catch (e) { console.log("Logging failed"); }
     }
 
-    function sendLogoutLog() {
-        if (sessionRow) {
-            const duration = document.getElementById('sessionTimer').innerText;
-            fetch(EXEC_URL, {
-                method: 'POST', keepalive: true,
-                body: JSON.stringify({ action: 'logLogout', row: sessionRow, duration: duration })
-            }).catch(e=>{});
-        }
-    }
-
-    document.addEventListener("visibilitychange", () => {
-        if (document.hidden) {
-            if (currentUser && currentUser.role === "Student") logout(false); 
-        }
-    });
-
-    window.addEventListener("pagehide", () => {
-        if (currentUser && currentUser.role === "Official") sendLogoutLog();
-    });
-
-    async function logout(manual=true) {
-        if(!currentUser) return;
-        
+    function logout(manual=true) {
         clearInterval(timerInterval);
-        if(manual) showLoader("Logging out...");
-        
-        sendLogoutLog();
-        sessionRow = null; 
-        
-        if(manual && currentUser.role==="Official") localStorage.removeItem("uthsavOfficial");
-        currentUser = null;
-        
-        if(manual) window.location.reload();
-        else { document.getElementById('loginScreen').style.display='flex'; document.getElementById('appScreen').style.display='none'; document.getElementById('loginPhone').value=''; }
+        localStorage.removeItem("uthsavOfficial");
+        window.location.reload();
     }
 
-    // --- ADMIN DASHBOARD LOGIC ---
-    function applySettingsToUI() {
-        if (dbSettings.Global_Registration === "CLOSED") {
-            document.getElementById('registrationForm').style.display = 'none';
-            document.getElementById('regClosedMsg').style.display = 'block';
-            document.getElementById('regCustomMsg').innerText = dbSettings.Global_Message || "Contact Administrator.";
-        } else {
-            document.getElementById('registrationForm').style.display = 'block';
-            document.getElementById('regClosedMsg').style.display = 'none';
-        }
-
-        const festDropdown = document.getElementById('festName');
-        festDropdown.innerHTML = '<option value="">-- Select Fest --</option>';
-        allFestNames.forEach(f => {
-            if (dbSettings["Fest_" + f] !== "DISABLED") {
-                festDropdown.innerHTML += `<option value="${f}">${f}</option>`;
-            }
-        });
-    }
-
-    function renderAdminPanel() {
-        document.getElementById('adminGlobalStatus').value = dbSettings.Global_Registration || "OPEN";
-        document.getElementById('adminGlobalMsg').value = dbSettings.Global_Message || "";
-
-        const festGrid = document.getElementById('adminFestList');
-        festGrid.innerHTML = "";
-        allFestNames.forEach(f => {
-            const isChecked = dbSettings["Fest_" + f] !== "DISABLED" ? "checked" : "";
-            festGrid.innerHTML += `<div class="fest-toggle"><input type="checkbox" id="chk_${f.replace(/\s/g,'')}" value="${f}" ${isChecked}> <label>${f}</label></div>`;
-        });
-
-        renderUserTable();
-        renderLogTable();
-    }
-
-    async function saveAdminSettings() {
-        dbSettings.Global_Registration = document.getElementById('adminGlobalStatus').value;
-        dbSettings.Global_Message = document.getElementById('adminGlobalMsg').value;
-        allFestNames.forEach(f => {
-            const chk = document.getElementById("chk_" + f.replace(/\s/g,''));
-            dbSettings["Fest_" + f] = chk && chk.checked ? "ENABLED" : "DISABLED";
-        });
-        applySettingsToUI(); 
-        showLoader("Saving Settings...");
-        try {
-            await fetch(EXEC_URL, { method:'POST', body: JSON.stringify({action: 'saveSettings', settings: dbSettings}) });
-            hideLoader(); showMessage("Settings Saved!");
-        } catch(e) { hideLoader(); showMessage("Error saving settings.", true); }
-    }
-
-    // Users
-    function renderUserTable() {
-        const tbody = document.getElementById('adminUserTable'); tbody.innerHTML = "";
-        dbUsers.forEach(u => {
-            tbody.innerHTML += `<tr>
-                <td>${u["User ID"]}</td><td>${u["Name"]}</td><td>${u["Password"]}</td><td>${u["Role"]}</td><td>${u["Access"]}</td>
-                <td>
-                    <button class="action-btn" style="padding:5px; font-size:12px;" onclick="editUser('${u["User ID"]}', '${u["Name"]}', '${u["Password"]}', '${u["Role"]}', '${u["Access"]}')">Edit</button>
-                    <button class="logout-btn" style="padding:5px; font-size:12px; margin:0;" onclick="deleteUser('${u["User ID"]}')">Delete</button>
-                </td>
-            </tr>`;
-        });
-    }
-
-    function editUser(id, name, pass, role, access) {
-        document.getElementById('manageTargetId').value = id; document.getElementById('manageUserId').value = id;
-        document.getElementById('manageUserName').value = name; document.getElementById('manageUserPass').value = pass;
-        document.getElementById('manageUserRole').value = role; document.getElementById('manageUserAccess').value = access;
-    }
-
-    async function submitUser() {
-        const targetId = document.getElementById('manageTargetId').value, uId = document.getElementById('manageUserId').value.trim();
-        const uName = document.getElementById('manageUserName').value.trim(), uPass = document.getElementById('manageUserPass').value.trim();
-        const uRole = document.getElementById('manageUserRole').value.trim(), uAcc = document.getElementById('manageUserAccess').value.trim();
-        if(!uId || !uName || !uPass) return showMessage("Fill ID, Name, Password", true);
-        let subAction = targetId ? 'edit' : 'add'; showLoader("Saving User...");
-        try {
-            await fetch(EXEC_URL, { method:'POST', body: JSON.stringify({action: 'manageUser', subAction: subAction, targetId: targetId, user: {id: uId, name: uName, password: uPass, role: uRole, access: uAcc}}) });
-            if(subAction === 'add') dbUsers.push({"User ID": uId, "Name": uName, "Password": uPass, "Role": uRole, "Access": uAcc});
-            else { let user = dbUsers.find(x => x["User ID"] === targetId); user["User ID"] = uId; user["Name"] = uName; user["Password"] = uPass; user["Role"] = uRole; user["Access"] = uAcc; }
-            document.getElementById('manageTargetId').value = ""; document.getElementById('manageUserId').value = ""; document.getElementById('manageUserName').value = ""; document.getElementById('manageUserPass').value = ""; document.getElementById('manageUserRole').value = ""; document.getElementById('manageUserAccess').value = "";
-            renderUserTable(); hideLoader(); showMessage("User saved!");
-        } catch(e) { hideLoader(); showMessage("Error saving user.", true); }
-    }
-
-    async function deleteUser(id) {
-        if(!confirm(`Delete official ${id}?`)) return;
-        showLoader("Deleting...");
-        try {
-            await fetch(EXEC_URL, { method:'POST', body: JSON.stringify({action: 'manageUser', subAction: 'delete', targetId: id}) });
-            dbUsers = dbUsers.filter(x => x["User ID"] !== id);
-            renderUserTable(); hideLoader(); showMessage("User deleted!");
-        } catch(e) { hideLoader(); showMessage("Error deleting.", true); }
-    }
-
-    // Logs
-    function renderLogTable() {
-        const tbody = document.getElementById('adminLogTable'); tbody.innerHTML = "";
-        
-        [...dbLogs].reverse().forEach(l => {
-            let dateStr = "";
-            if (l["Date"]) {
-                let d = new Date(l["Date"]);
-                if (!isNaN(d.getTime())) dateStr = String(d.getDate()).padStart(2, '0') + '/' + String(d.getMonth() + 1).padStart(2, '0') + '/' + d.getFullYear();
-                else dateStr = String(l["Date"]).split('T')[0];
-            }
-            
-            const formatTime = (val) => {
-                if (!val) return "";
-                let d = new Date(val);
-                if (!isNaN(d.getTime())) return String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0') + ':' + String(d.getSeconds()).padStart(2, '0');
-                let strVal = String(val).trim().split(' ')[0];
-                if (strVal.includes(':')) {
-                    let p = strVal.split(':'); return (p[0]||'00').padStart(2,'0') + ':' + (p[1]||'00').padStart(2,'0') + ':' + (p[2]||'00').padStart(2,'0');
-                }
-                return strVal;
-            };
-
-            const fLogin = formatTime(l["Login Time"]);
-            const fLogout = formatTime(l["Logout Time"]);
-
-            let calcDuration = "";
-            if (fLogin && fLogout) {
-                const toSeconds = (t) => { let p = t.split(':'); return (parseInt(p[0]) * 3600) + (parseInt(p[1]) * 60) + parseInt(p[2]); };
-                let diff = toSeconds(fLogout) - toSeconds(fLogin);
-                if (diff < 0) diff += 24 * 3600; 
-                let h = String(Math.floor(diff / 3600)).padStart(2, '0');
-                let m = String(Math.floor((diff % 3600) / 60)).padStart(2, '0');
-                let s = String(diff % 60).padStart(2, '0');
-                calcDuration = `${h}:${m}:${s}`;
-            } else if (fLogin && !fLogout) {
-                calcDuration = "<span style='color:#27ae60; font-weight:bold;'>🟢 Active Now</span>";
-            }
-
-            const actualIndex = dbLogs.indexOf(l);
-
-            tbody.innerHTML += `<tr>
-                <td>${dateStr}</td><td>${l["User ID"]}</td><td>${l["Name"]}</td><td>${fLogin}</td><td>${fLogout}</td><td>${calcDuration}</td>
-                <td><button class="logout-btn" style="padding:5px; font-size:12px; margin:0;" onclick="deleteLog('${l["User ID"]}', '${dateStr}', '${fLogin}', ${actualIndex})">Delete</button></td>
-            </tr>`;
-        });
-    }
-
-    async function deleteLog(userId, dateStr, loginTime, localIndex) {
-        if(!confirm(`Delete log for ${userId}?`)) return;
-        showLoader("Deleting Log...");
-        try {
-            await fetch(EXEC_URL, { method:'POST', body: JSON.stringify({action: 'manageLog', subAction: 'delete', target: {userId: userId, date: dateStr, loginTime: loginTime}}) });
-            if (localIndex > -1) dbLogs.splice(localIndex, 1);
-            renderLogTable(); hideLoader(); showMessage("Log deleted!");
-        } catch(e) { hideLoader(); showMessage("Error deleting log.", true); }
-    }
-
-    // --- REGISTRATION LOGIC ---
+    // --- 6. REGISTRATION ---
     function populateItems() {
         const fest = document.getElementById('festName').value, sel = document.getElementById('itemSelect');
-        sel.innerHTML = '<option value="">-- Select Item --</option>'; clearItemDetails();
-        document.getElementById('studentsContainer').innerHTML = "<p style='color:red;'>Select Fest and Item.</p>";
+        sel.innerHTML = '<option value="">-- Select Item --</option>'; 
         if(!fest) return;
         dbFests.filter(f => f["Fest Name"] === fest).forEach(i => sel.innerHTML += `<option value="${i["Item"]}">${i["Item"]} (${i["Category"]})</option>`);
     }
@@ -641,89 +454,97 @@
             document.getElementById('itemCode').value=data["Item Code"]; document.getElementById('category').value=data["Category"];
             document.getElementById('participants').value=data["No of Participants"]; document.getElementById('duration').value=data["Duration"];
             generateStudentSlots(parseInt(data["No of Participants"])||1);
-        } else { clearItemDetails(); document.getElementById('studentsContainer').innerHTML="<p style='color:red;'>Select Fest and Item.</p>"; }
+        }
     }
-    function clearItemDetails() { ['itemCode','category','participants','duration'].forEach(id => document.getElementById(id).value = ""); }
 
     function generateStudentSlots(count) {
         const c = document.getElementById('studentsContainer'); c.innerHTML = ""; 
         const isGroup = count > 1;
         for(let i=1; i<=count; i++) {
-            let leaderHTML = isGroup ? `<div class="leader-box"><input type="radio" name="teamLeader" id="leader_${i}" value="${i}" required> <label for="leader_${i}" style="cursor:pointer;">Assign as Team Leader</label></div>` : '';
+            let leaderHTML = isGroup ? `<div class="leader-box"><input type="radio" name="teamLeader" id="leader_${i}" value="${i}" required> <label for="leader_${i}">Assign Team Leader</label></div>` : '';
             c.innerHTML += `
             <div class="student-block">
-                <h5>Participant ${i}</h5>
-                ${leaderHTML}
-                <div class="row" style="margin-bottom:15px;">
-                    <div class="form-group autocomplete-container" style="grid-column: 1 / -1;">
-                        <label>Search Admn No, Name, Phone</label>
-                        <input type="text" id="searchInput_${i}" placeholder="Search..." oninput="searchStudent(${i})">
-                        <div id="searchResults_${i}" class="autocomplete-items"></div>
-                    </div>
-                </div>
+                <h5 style="margin:0 0 10px 0;">Participant ${i}</h5>${leaderHTML}
+                <div class="row"><div class="form-group autocomplete-container" style="grid-column:1/-1;"><label>Search Admn No / Name</label><input type="text" id="searchInput_${i}" placeholder="Start typing..." oninput="searchStudent(${i})"><div id="searchResults_${i}" class="autocomplete-items"></div></div></div>
                 <div class="row">
                     <div class="form-group"><label>Admn No</label><input type="text" id="admnNo_${i}" readonly required></div>
                     <div class="form-group"><label>Name</label><input type="text" id="name_${i}" readonly required></div>
-                    <div class="form-group"><label>Gender</label><input type="text" id="gender_${i}" readonly required></div>
-                    <div class="form-group"><label>Class</label><input type="text" id="studentClass_${i}" readonly required></div>
-                    <div class="form-group"><label>Division</label><input type="text" id="division_${i}" readonly required></div>
-                    <div class="form-group"><label>Phone</label><input type="text" id="phone_${i}" readonly required></div>
+                    <div class="form-group"><label>Class & Div</label><input type="text" id="studentClass_${i}" readonly required></div>
                 </div>
+                <input type="hidden" id="gender_${i}"><input type="hidden" id="division_${i}"><input type="hidden" id="phone_${i}">
             </div>`;
         }
     }
 
     function searchStudent(idx) {
-        const q = document.getElementById('searchInput_'+idx).value.toLowerCase().trim(), res = document.getElementById('searchResults_'+idx);
-        res.innerHTML = ''; if(!q) { clearStudentDetails(idx); return; }
+        const q = document.getElementById('searchInput_'+idx).value.toLowerCase(), res = document.getElementById('searchResults_'+idx);
+        res.innerHTML = ''; if(!q) return;
         const cat = document.getElementById('category').value.toLowerCase();
         dbStudents.filter(s => {
-            const mTxt = String(s["Admission Number"]).toLowerCase().includes(q) || String(s["Name"]).toLowerCase().includes(q) || String(s["Phone No"]).includes(q);
+            const mTxt = String(s["Admission Number"]).includes(q) || String(s["Name"]).toLowerCase().includes(q);
             const mGen = (cat==='boy'||cat==='girl') ? String(s["Gender"]).toLowerCase()===cat : true;
             return mTxt && mGen;
         }).forEach(st => {
-            const d = document.createElement("div"); d.innerHTML = `<strong>${st["Admission Number"]}</strong> - ${st["Name"]} (${st["Class"]} ${st["Division"]})`;
+            const d = document.createElement("div"); d.innerHTML = `<b>${st["Admission Number"]}</b> - ${st["Name"]} (${st["Class"]} ${st["Division"]})`;
             d.onclick = () => selectStudent(st, idx); res.appendChild(d);
         });
     }
 
     function selectStudent(st, idx) {
         const fName = document.getElementById('festName').value, iName = document.getElementById('itemSelect').value, cnt = parseInt(document.getElementById('participants').value)||1;
-        for(let i=1;i<=cnt;i++) if(i!==idx && document.getElementById('admnNo_'+i)?.value==st["Admission Number"]) return showMessage("Already selected above!", true);
+        for(let i=1;i<=cnt;i++) if(i!==idx && document.getElementById('admnNo_'+i)?.value==st["Admission Number"]) return showMessage("Already selected in this form!", true);
         
         let sCount=0, gCount=0;
         dbRegistrations.filter(r => r["Admission Number"]==st["Admission Number"] && r["Name of Fest"]==fName).forEach(r => parseInt(r["No of Participants"])>1 ? gCount++ : sCount++);
-        if(dbRegistrations.find(r => r["Admission Number"]==st["Admission Number"] && r["Item"]==iName && r["Name of Fest"]==fName)) return showMessage("Already Registered for this item!", true);
-        if((cnt>1 && gCount>=2) || (cnt==1 && sCount>=3)) return showMessage("Participation limit exceeded for this Fest!", true);
+        if(dbRegistrations.find(r => r["Admission Number"]==st["Admission Number"] && r["Item"]==iName && r["Name of Fest"]==fName)) return showMessage("Already Registered for this specific item!", true);
+        
+        if(cnt===1 && sCount>=3) return showMessage("Limit Exceeded: Max 3 Individual items!", true);
+        if(cnt>1 && gCount>=2) return showMessage("Limit Exceeded: Max 2 Group items!", true);
 
-        ['searchInput','name','gender','studentClass','division','phone'].forEach(k => document.getElementById(k+'_'+idx).value = st[k==='searchInput'?'Name':(k==='studentClass'?'Class':(k==='phone'?'Phone No':(k.charAt(0).toUpperCase()+k.slice(1))))]);
-        document.getElementById('admnNo_'+idx).value = st["Admission Number"]; document.getElementById('searchResults_'+idx).innerHTML = '';
+        document.getElementById('admnNo_'+idx).value = st["Admission Number"];
+        document.getElementById('name_'+idx).value = st["Name"];
+        document.getElementById('studentClass_'+idx).value = `${st["Class"]} ${st["Division"]}`;
+        document.getElementById('gender_'+idx).value = st["Gender"];
+        document.getElementById('division_'+idx).value = st["Division"];
+        document.getElementById('phone_'+idx).value = st["Phone No"] || "";
+        document.getElementById('searchResults_'+idx).innerHTML = '';
     }
-    function clearStudentDetails(idx) { ['admnNo','name','gender','studentClass','division','phone'].forEach(id => document.getElementById(id+'_'+idx).value = ""); document.getElementById('searchResults_'+idx).innerHTML=''; }
 
     async function submitForm(e) {
         e.preventDefault();
-        let cnt = parseInt(document.getElementById('participants').value)||1, sData = [], fName = document.getElementById('festName').value, iName = document.getElementById('itemSelect').value;
+        let cnt = parseInt(document.getElementById('participants').value)||1, fName = document.getElementById('festName').value, iName = document.getElementById('itemSelect').value;
         let leaderIdx = cnt > 1 ? document.querySelector('input[name="teamLeader"]:checked')?.value : 1;
-        if(cnt > 1 && !leaderIdx) return showMessage("Please select a Team Leader!", true);
 
-        for(let i=1; i<=cnt; i++) {
-            let admn = document.getElementById('admnNo_'+i).value; if(!admn) return showMessage(`Select Participant ${i}`, true);
-            sData.push({ admnNo: admn, name: document.getElementById('name_'+i).value, gender: document.getElementById('gender_'+i).value, studentClass: document.getElementById('studentClass_'+i).value, division: document.getElementById('division_'+i).value, phone: document.getElementById('phone_'+i).value, roleInEvent: cnt===1 ? 'Participant' : (i==leaderIdx ? 'Team Leader' : 'Participant') });
-        }
-        showLoader("Saving...");
+        showLoader("Saving Registration...");
         try {
-            await fetch(EXEC_URL, { method:'POST', body: JSON.stringify({action: 'register', festName: fName, item: iName, itemCode: document.getElementById('itemCode').value, category: document.getElementById('category').value, participants: cnt, duration: document.getElementById('duration').value, students: sData}) });
-            sData.forEach(s => dbRegistrations.push({ "Timestamp": new Date().toLocaleString(), "Admission Number": s.admnNo, "Name": s.name, "Class": s.studentClass, "Division": s.division, "Name of Fest": fName, "Item": iName, "Category": document.getElementById('category').value, "No of Participants": cnt, "Role in Event": s.roleInEvent }));
-            showMessage("Registration Successful!"); e.target.reset(); document.getElementById('studentsContainer').innerHTML="<p style='color:red;'>Select Fest and Item.</p>"; hideLoader();
-        } catch(err) { hideLoader(); showMessage("Error saving.", true); }
+            const batch = db.batch();
+            for(let i=1; i<=cnt; i++) {
+                const entry = {
+                    "Timestamp": new Date().toLocaleString('en-IN'),
+                    "Admission Number": document.getElementById('admnNo_'+i).value,
+                    "Name": document.getElementById('name_'+i).value,
+                    "Class": document.getElementById('studentClass_'+i).value.split(' ')[0],
+                    "Division": document.getElementById('division_'+i).value,
+                    "Name of Fest": fName,
+                    "Item": iName,
+                    "Category": document.getElementById('category').value,
+                    "No of Participants": cnt,
+                    "Role in Event": cnt===1 ? 'Participant' : (i==leaderIdx ? 'Team Leader' : 'Participant')
+                };
+                const ref = db.collection("registrations").doc();
+                batch.set(ref, entry);
+                dbRegistrations.push({...entry, id: ref.id});
+            }
+            await batch.commit();
+            showMessage("Success! Registration Saved.");
+            e.target.reset(); document.getElementById('studentsContainer').innerHTML = ""; hideLoader();
+        } catch(err) { hideLoader(); showMessage("Critical Error saving data.", true); }
     }
 
-    // --- RECORDS TABLE ---
+    // --- 7. VIEW RECORDS (CARD RENDERER) ---
     function renderTables() {
         const clsFilt = document.getElementById('filterClass').value, divFilt = document.getElementById('filterDivision').value, txtFilt = document.getElementById('filterSearch').value.toLowerCase();
         let data = dbRegistrations;
-        
         if(currentUser.role === "Student") data = data.filter(r => r["Admission Number"] == currentUser.id);
         
         data = data.filter(r => {
@@ -733,35 +554,109 @@
             return mCls && mDiv && mTxt;
         });
 
-        const formatDateTime = (ts) => {
-            if (!ts) return '';
-            let d = new Date(ts);
-            if (!isNaN(d.getTime())) {
-                const pad = (n) => String(n).padStart(2, '0');
-                return `${pad(d.getDate())}/${pad(d.getMonth()+1)}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
-            }
-            return String(ts).replace(',', '').trim();
-        };
+        const cardsInd = document.getElementById('cardsInd'), cardsGrp = document.getElementById('cardsGrp');
+        cardsInd.innerHTML = ''; cardsGrp.innerHTML = '';
 
-        const tbInd = document.getElementById('tbodyInd'), tbGrp = document.getElementById('tbodyGrp');
-        tbInd.innerHTML = ''; tbGrp.innerHTML = '';
+        if(data.length === 0) {
+            const empty = "<p style='grid-column:1/-1; text-align:center; color:#999; padding:20px;'>No records found matching filters.</p>";
+            cardsInd.innerHTML = empty; cardsGrp.innerHTML = empty;
+            return;
+        }
+
         data.forEach(r => {
-            const formattedTime = formatDateTime(r["Timestamp"]);
-            const classDiv = `${r["Class"] || ''} ${r["Division"] || ''}`.trim();
-            let row = `<tr><td>${formattedTime}</td><td>${r["Admission Number"]}</td><td>${r["Name"]}</td><td>${classDiv}</td><td>${r["Name of Fest"]}</td><td>${r["Item"]}</td><td>${parseInt(r["No of Participants"])>1 ? (r["Role in Event"]||'Participant') : r["Category"]}</td></tr>`;
-            if(parseInt(r["No of Participants"]) > 1) tbGrp.innerHTML += row; else tbInd.innerHTML += row;
+            const isGroup = parseInt(r["No of Participants"]) > 1;
+            const cardHTML = `
+                <div class="record-card ${isGroup ? 'group-card' : ''}">
+                    <h4>${r["Item"]} <span class="fest-badge">${r["Name of Fest"]}</span></h4>
+                    <p><span class="label">Name</span> <span>${r["Name"]}</span></p>
+                    <p><span class="label">Admn No</span> <span>${r["Admission Number"]}</span></p>
+                    <p><span class="label">Class</span> <span>${r["Class"]} ${r["Division"]}</span></p>
+                    <p><span class="label">${isGroup ? 'Role' : 'Category'}</span> <span style="color:var(--primary); font-weight:bold;">${isGroup ? r["Role in Event"] : r["Category"]}</span></p>
+                    <div class="timestamp">${r["Timestamp"]}</div>
+                </div>
+            `;
+            if(isGroup) cardsGrp.innerHTML += cardHTML; else cardsInd.innerHTML += cardHTML;
         });
     }
 
-    function sortTable(tblId, colIdx) {
-        let table = document.getElementById(tblId), rows = Array.from(table.rows).slice(1);
-        let asc = table.getAttribute('data-sort-dir') !== 'asc'; table.setAttribute('data-sort-dir', asc ? 'asc' : 'desc');
-        rows.sort((a,b) => {
-            let v1 = a.cells[colIdx].innerText.toLowerCase(), v2 = b.cells[colIdx].innerText.toLowerCase();
-            return isNaN(v1) || isNaN(v2) ? v1.localeCompare(v2) * (asc?1:-1) : (Number(v1)-Number(v2)) * (asc?1:-1);
+    // --- 8. ADMIN DASHBOARD ---
+    function applySettingsToUI() {
+        if (dbSettings.Global_Registration === "CLOSED") {
+            document.getElementById('registrationForm').style.display = 'none';
+            document.getElementById('regClosedMsg').style.display = 'block';
+            document.getElementById('regCustomMsg').innerText = dbSettings.Global_Message || "Contact Administrator.";
+        } else {
+            document.getElementById('registrationForm').style.display = 'block';
+            document.getElementById('regClosedMsg').style.display = 'none';
+        }
+        const festDropdown = document.getElementById('festName');
+        festDropdown.innerHTML = '<option value="">-- Select Fest --</option>';
+        allFestNames.forEach(f => {
+            if (dbSettings["Fest_" + f] !== "DISABLED") festDropdown.innerHTML += `<option value="${f}">${f}</option>`;
         });
-        rows.forEach(r => table.tBodies[0].appendChild(r));
     }
+
+    function renderAdminPanel() {
+        document.getElementById('adminGlobalStatus').value = dbSettings.Global_Registration || "OPEN";
+        document.getElementById('adminGlobalMsg').value = dbSettings.Global_Message || "";
+        const festGrid = document.getElementById('adminFestList'); festGrid.innerHTML = "";
+        allFestNames.forEach(f => {
+            const isChecked = dbSettings["Fest_" + f] !== "DISABLED" ? "checked" : "";
+            festGrid.innerHTML += `<div class="fest-toggle"><input type="checkbox" id="chk_${f.replace(/\s/g,'')}" ${isChecked}> <label>${f}</label></div>`;
+        });
+        renderUserTable();
+    }
+
+    async function saveAdminSettings() {
+        dbSettings.Global_Registration = document.getElementById('adminGlobalStatus').value;
+        dbSettings.Global_Message = document.getElementById('adminGlobalMsg').value;
+        allFestNames.forEach(f => {
+            const chk = document.getElementById("chk_" + f.replace(/\s/g,''));
+            dbSettings["Fest_" + f] = chk && chk.checked ? "ENABLED" : "DISABLED";
+        });
+        showLoader("Updating System...");
+        await db.collection("config").doc("settings").set(dbSettings);
+        applySettingsToUI(); hideLoader(); showMessage("Settings Applied!");
+    }
+
+    async function addNewItem() {
+        const it = { "Fest Name": document.getElementById('newItemFest').value, "Item": document.getElementById('newItemName').value, "Item Code": document.getElementById('newItemCode').value, "Category": document.getElementById('newItemCat').value, "No of Participants": document.getElementById('newItemPart').value, "Duration": document.getElementById('newItemDur').value };
+        if(!it.Item || !it["Item Code"]) return showMessage("Fill Name and Code", true);
+        showLoader("Saving Item...");
+        await db.collection("fests").add(it);
+        dbFests.push(it); hideLoader(); showMessage("New Item Added!");
+    }
+
+    async function bulkUploadStudents() {
+        const raw = document.getElementById('bulkStudentData').value.trim();
+        if(!raw) return;
+        showLoader("Uploading Bulk Data...");
+        const batch = db.batch();
+        raw.split('\n').forEach(line => {
+            const c = line.split(/[,\t]/).map(x => x.trim());
+            if(c.length >= 5) {
+                const s = { "Admission Number": c[0], "Name": c[1], "Class": c[2], "Division": c[3], "Gender": c[4], "Phone No": c[5]||"" };
+                batch.set(db.collection("students").doc(), s);
+                dbStudents.push(s);
+            }
+        });
+        await batch.commit(); hideLoader(); showMessage("Bulk Import Finished!");
+    }
+
+    function renderUserTable() {
+        const tbody = document.getElementById('adminUserTable'); tbody.innerHTML = "";
+        dbUsers.forEach(u => {
+            tbody.innerHTML += `<tr><td>${u["User ID"]}</td><td>${u["Name"]}</td><td>${u["Role"]||'Official'}</td><td>${u["Access"]}</td><td><button class="logout-btn" style="padding:4px 8px; font-size:11px;" onclick="deleteUser('${u.id}')">Delete</button></td></tr>`;
+        });
+    }
+
+    async function submitUser() {
+        const u = { "User ID": document.getElementById('manageUserId').value, "Name": document.getElementById('manageUserName').value, "Password": document.getElementById('manageUserPass').value, "Role": "Official", "Access": document.getElementById('manageUserAccess').value };
+        if(!u["User ID"] || !u["Password"]) return showMessage("ID/Pass required", true);
+        await db.collection("users").add(u); window.location.reload();
+    }
+
+    async function deleteUser(id) { if(confirm("Permanently delete this user?")) { await db.collection("users").doc(id).delete(); window.location.reload(); } }
 </script>
 </body>
 </html>
