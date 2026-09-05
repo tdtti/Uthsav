@@ -1541,6 +1541,13 @@
         return "Fest";
     }
 
+    // Global Helper: checks if a fest is enabled in settings
+    function isFestEnabled(festName) {
+        if (!festName) return false;
+        return dbSettings["Fest_" + festName] !== "DISABLED";
+    }
+
+
     // --- 3. MODERN POPUP DIALOGS ---
     function showCustomDialog(title, message, type = "info", onConfirm = null, showCancel = false) {
         const overlay = document.getElementById("customDialogOverlay");
@@ -1886,6 +1893,32 @@
     }
 
     // --- 9. TAB 1: REGISTRATION & STUDENT MASTER DIRECTORY ---
+    // DYNAMICALLY FILTER CLASSIFICATIONS BASED ON ENABLED FESTS
+    function populateClassificationDropdown() {
+        const classSelect = document.getElementById('festClassification');
+        if (!classSelect) return;
+        const currentVal = classSelect.value;
+        classSelect.innerHTML = '<option value="">-- Select Classification --</option>';
+
+        Object.keys(classificationMap).forEach(cat => {
+            // Only show category if at least ONE fest under it is ticked/enabled
+            const hasTickedFest = classificationMap[cat].some(f => dbSettings["Fest_" + f] !== "DISABLED");
+            if (hasTickedFest) {
+                classSelect.innerHTML += `<option value="${cat}">${cat}</option>`;
+            }
+        });
+
+        if ([...classSelect.options].some(o => o.value === currentVal)) {
+            classSelect.value = currentVal;
+        } else {
+            classSelect.value = "";
+            const festDropdown = document.getElementById('festName');
+            const itemSelect = document.getElementById('itemSelect');
+            if (festDropdown) festDropdown.innerHTML = '<option value="">-- Select Fest --</option>';
+            if (itemSelect) itemSelect.innerHTML = '<option value="">-- Select Item --</option>';
+        }
+    }
+
     function onClassificationChanged() {
         const classification = document.getElementById('festClassification').value;
         const festDropdown = document.getElementById('festName');
@@ -1897,6 +1930,7 @@
 
         const validFests = classificationMap[classification] || [];
         validFests.forEach(f => {
+            // ONLY show fests that are ticked/enabled in Enabled Fests
             if (dbSettings["Fest_" + f] !== "DISABLED") {
                 festDropdown.innerHTML += `<option value="${f}">${f}</option>`;
             }
@@ -2193,7 +2227,7 @@
         const txtFilt = String(document.getElementById('filterSearch')?.value || "").toLowerCase().trim();
         const sortBy = document.getElementById('sortRecordsBy').value;
 
-        let data = [...dbRegistrations];
+        let data = [...dbRegistrations].filter(r => isFestEnabled(r["Name of Fest"]));
         const isAdmin = currentUser && (currentUser.role === "Official" || currentUser.access.includes("3"));
 
         if (currentUser && currentUser.role === "Student") {
@@ -2281,7 +2315,7 @@
         const tbody = document.getElementById('reportTableTbody');
         tbody.innerHTML = "";
 
-        let list = [...dbRegistrations];
+        let list = [...dbRegistrations].filter(r => isFestEnabled(r["Name of Fest"]));
         if (fest !== "ALL") {
             list = list.filter(r => r["Name of Fest"] === fest);
         }
@@ -2346,10 +2380,10 @@
         judgeSel.innerHTML = '<option value="">-- Choose Item --</option>';
         existJudgeSel.innerHTML = '<option value="">-- Or Choose Existing Registered Judge --</option>';
 
-        dbFests.forEach(f => {
-            const txt = `${f["Item"]} [${f["Item Code"] || 'N/A'}] (${f["Fest Name"]})`;
-            sel.innerHTML += `<option value="${f["Item Code"]}">${txt}</option>`;
-            judgeSel.innerHTML += `<option value="${f["Item Code"]}">${txt}</option>`;
+        dbFests.filter(f => isFestEnabled(f["Fest Name"])).forEach(f => {
+        const txt = `${f["Item"]} [${f["Item Code"] || 'N/A'}] (${f["Fest Name"]})`;
+        sel.innerHTML += `<option value="${f["Item Code"]}">${txt}</option>`;
+        judgeSel.innerHTML += `<option value="${f["Item Code"]}">${txt}</option>`;
         });
 
         dbJudges.forEach(j => {
@@ -2630,6 +2664,13 @@
             const assigned = currentJudge ? (currentJudge.assignedItems || []) : [];
             itemsToShow = dbFests.filter(f => assigned.includes(f["Item Code"]) && ((dbSettings.ActiveProgrammes || []).includes(f["Item Code"]) || (dbSettings.CompletedProgrammes || []).includes(f["Item Code"])));
         }
+        // ADD THIS LINE right before itemsToShow.forEach(...):
+        itemsToShow = itemsToShow.filter(f => isFestEnabled(f["Fest Name"]));
+
+        itemsToShow.forEach(item => {
+            const isDone = (dbSettings.CompletedProgrammes || []).includes(item["Item Code"]);
+            sel.innerHTML += `<option value="${item["Item Code"]}">${item["Item"]} [${item["Item Code"]}] ${isDone ? '(COMPLETED)' : ''}</option>`;
+        });
 
         itemsToShow.forEach(item => {
             const isDone = (dbSettings.CompletedProgrammes || []).includes(item["Item Code"]);
@@ -2939,8 +2980,11 @@
         scoredItemCodes.forEach(code => {
             const festObj = dbFests.find(f => f["Item Code"] === code);
             const festName = festObj ? festObj["Fest Name"] : "General";
-            const cat = getFestivalCategory(festName);
+            
+            // ADD THIS LINE: Skip disabled fests completely from Tabulation
+            if (!isFestEnabled(festName)) return;
 
+            const cat = getFestivalCategory(festName);
             if (catFilter !== "ALL" && cat !== catFilter) return;
 
             if (!hierarchy[cat]) hierarchy[cat] = {};
@@ -3190,7 +3234,7 @@
 
         container.innerHTML = "";
 
-        let results = [...dbPublishedResults];
+        let results = [...dbPublishedResults].filter(r => isFestEnabled(r.festName));
         if (catFilter !== "ALL") {
             results = results.filter(r => r.festCategory === catFilter);
         }
@@ -3276,6 +3320,9 @@
                                     <button class="action-btn gold" style="padding:6px 9px;" title="Print Certificate" onclick="openCertificateModal('${row.id}', true)">
                                         <i class="fas fa-print"></i>
                                     </button>
+                                    <button class="action-btn danger" style="padding:6px 9px;" title="Delete Result Entry" onclick="deleteResultEntry('${row.id}')">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
                                 </div>
                             </td>
                         </tr>
@@ -3324,6 +3371,30 @@
         document.getElementById('certModal').style.display = 'none';
     }
 
+    // DELETE SINGLE ENTRY FROM RESULTS TAB
+    async function deleteResultEntry(resId) {
+        showCustomDialog(
+            "Delete Published Result?", 
+            "Are you sure you want to permanently delete this published result record?", 
+            "danger", 
+            async () => {
+                showLoader("Deleting Result...");
+                try {
+                    await db.collection("published_results").doc(resId).delete();
+                    dbPublishedResults = dbPublishedResults.filter(r => r.id !== resId);
+                    hideLoader();
+                    renderResults();
+                    renderSubDistrictTab();
+                    showCustomDialog("Deleted", "Published result removed successfully.", "success");
+                } catch (e) {
+                    hideLoader();
+                    showCustomDialog("Error", "Could not delete result record.", "danger");
+                }
+            }, 
+            true
+        );
+    }
+
     // --- 15. TAB 8: SUB-DISTRICT LEVEL QUALIFICATION TAB ---
     function renderSubDistrictTab() {
         const container = document.getElementById('subDistrictContainer');
@@ -3333,7 +3404,7 @@
 
         container.innerHTML = "";
 
-        let results = [...dbPublishedResults];
+        let results = [...dbPublishedResults].filter(r => isFestEnabled(r.festName));
         if (catFilter !== "ALL") {
             results = results.filter(r => r.festCategory === catFilter);
         }
@@ -3393,6 +3464,7 @@
                                     <th>Class & Div</th>
                                     <th>Score & Grade</th>
                                     <th style="width:160px; text-align:center;">Sub-District Status</th>
+                                    <th style="width:70px; text-align:center;">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -3413,6 +3485,11 @@
                                     <input type="checkbox" class="sd-qual-chk" data-resultid="${r.id}" ${isChecked} ${isAdmin ? '' : 'disabled'} onchange="toggleLocalSubDistrict('${r.id}', this.checked)">
                                     <span>${r.qualifiedSubDistrict ? 'Qualified' : 'Not Qualified'}</span>
                                 </label>
+                            </td>
+                            <td style="text-align:center;">
+                                <button class="action-btn danger" style="padding:4px 8px; font-size:12px;" onclick="deleteSubDistrictEntry('${r.id}')" title="Delete Entry">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
                             </td>
                         </tr>
                     `;
@@ -3459,11 +3536,36 @@
         }
     }
 
+    // DELETE SINGLE ENTRY FROM SUB-DISTRICT TAB
+    async function deleteSubDistrictEntry(resId) {
+        showCustomDialog(
+            "Delete Sub-District Entry?", 
+            "Are you sure you want to permanently delete this entry? It will be removed from both Sub-District and Results tabs.", 
+            "danger", 
+            async () => {
+                showLoader("Deleting Entry...");
+                try {
+                    await db.collection("published_results").doc(resId).delete();
+                    dbPublishedResults = dbPublishedResults.filter(r => r.id !== resId);
+                    hideLoader();
+                    renderSubDistrictTab();
+                    renderResults();
+                    showCustomDialog("Deleted", "Entry removed successfully.", "success");
+                } catch (e) {
+                    hideLoader();
+                    showCustomDialog("Error", "Could not delete entry.", "danger");
+                }
+            }, 
+            true
+        );
+    }
+
     function openSubDistrictReport(autoPrint = false) {
         const tbody = document.getElementById('sdReportTableTbody');
         tbody.innerHTML = "";
 
-        const qualifiedList = dbPublishedResults.filter(r => r.qualifiedSubDistrict === true);
+        const qualifiedList = dbPublishedResults.filter(r => r.qualifiedSubDistrict === true && isFestEnabled(r.festName));
+
         document.getElementById('sdReportMetaInfo').innerText = `Total Qualified: ${qualifiedList.length} | Generated on: ${new Date().toLocaleString('en-IN')}`;
 
         if (qualifiedList.length === 0) {
@@ -3583,6 +3685,7 @@
     }
 
     function applySettingsToUI() {
+        populateClassificationDropdown(); // <-- ADD THIS LINE
         const isStudent = currentUser && currentUser.role === "Student";
         const isJudge = currentUser && currentUser.role === "Judge";
         const isAdmin = currentUser && (currentUser.role === "Official" || currentUser.access.includes("3"));
@@ -3655,6 +3758,19 @@
         } else {
             document.getElementById('registrationForm').style.display = 'block';
             document.getElementById('regClosedMsg').style.display = 'none';
+        }
+
+        // Update Tab 2 Admin Fest Report Dropdown to only show enabled fests
+        const repFestSelect = document.getElementById('reportFestSelect');
+        if (repFestSelect) {
+            const curRepVal = repFestSelect.value;
+            repFestSelect.innerHTML = '<option value="ALL">-- All Enabled Fests --</option>';
+            allFestNames.filter(isFestEnabled).forEach(f => {
+                repFestSelect.innerHTML += `<option value="${f}">${f}</option>`;
+            });
+            if ([...repFestSelect.options].some(o => o.value === curRepVal)) {
+                repFestSelect.value = curRepVal;
+            }
         }
 
         applySecurityProtection();
